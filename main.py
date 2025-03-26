@@ -107,26 +107,6 @@ def create_account():
 @app.route('/driver/register', methods=['GET', 'POST'])
 def driver_register():
     if request.method == 'POST':
-        # Get form data
-        name = request.form.get('name')
-        email = request.form.get('email')
-        phone = request.form.get('phone')
-        university = request.form.get('university')
-        car_model = request.form.get('car_model')
-        car_color = request.form.get('car_color')
-        license_plate = request.form.get('license_plate')
-        
-        # Store user data in session (for demo purposes)
-        session['user'] = {
-            'name': name,
-            'email': email,
-            'role': 'driver',
-            'university': university,
-            'car_model': car_model,
-            'car_color': car_color,
-            'license_plate': license_plate
-        }
-        
         flash('You are now signed in as a driver! Welcome to WheelShare.', 'success')
         return redirect(url_for('home'))
     return render_template('driver_register.html')
@@ -134,20 +114,6 @@ def driver_register():
 @app.route('/passenger/register', methods=['GET', 'POST'])
 def passenger_register():
     if request.method == 'POST':
-        # Get form data
-        name = request.form.get('name')
-        email = request.form.get('email')
-        phone = request.form.get('phone')
-        university = request.form.get('university')
-        
-        # Store user data in session (for demo purposes)
-        session['user'] = {
-            'name': name,
-            'email': email,
-            'role': 'passenger',
-            'university': university
-        }
-        
         flash('You are now signed in as a passenger! Welcome to WheelShare.', 'success')
         return redirect(url_for('home'))
     return render_template('passenger_register.html')
