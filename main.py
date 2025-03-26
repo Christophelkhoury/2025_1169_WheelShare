@@ -1,5 +1,3 @@
-from app.core.database import get_db
-from sqlalchemy import text
 from flask import Flask, render_template, jsonify, request, redirect, url_for, session, flash
 import datetime
 import os
@@ -11,7 +9,6 @@ import sys
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY', 'your-secret-key-here')  # Use environment variable for secret key
 
 # Initialize Flask-Frozen
 freezer = Freezer(app)
@@ -21,12 +18,13 @@ SAMPLE_TRIPS = [
     {
         'id': 1,
         'driver_name': 'John Doe',
-        'from_location': 'Jounieh',
-        'to_location': 'LAU Byblos',
-        'departure_time': '8:00 AM',
-        'price_per_seat': 50000,
+        'from_location': 'Beirut',
+        'to_location': 'Tripoli',
+        'date': '2024-03-26',
+        'departure_time': '08:00 AM',
+        'price_per_seat': 5000,
         'available_seats': 3,
-        'days': ['Mon', 'Wed', 'Fri']
+        'status': 'active'
     },
     {
         'id': 2,
