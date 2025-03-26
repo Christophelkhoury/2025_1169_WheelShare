@@ -309,7 +309,10 @@ def api_trips():
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == 'build':
+        # Build static site
+        print("Building static site...")
         freezer.freeze()
+        print("Static site built successfully!")
     else:
         port = int(os.getenv('PORT', 5000))
         debug = os.getenv('FLASK_ENV') == 'development'
