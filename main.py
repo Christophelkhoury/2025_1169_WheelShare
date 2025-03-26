@@ -2,16 +2,12 @@ from flask import Flask, render_template, jsonify, request, redirect, url_for, s
 import datetime
 import os
 from dotenv import load_dotenv
-from flask_frozen import Freezer
 import sys
 
 # Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
-
-# Initialize Flask-Frozen
-freezer = Freezer(app)
 
 # Sample data for demonstration
 SAMPLE_TRIPS = [
@@ -306,14 +302,8 @@ def api_trips():
     return jsonify(SAMPLE_TRIPS)
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1 and sys.argv[1] == 'build':
-        # Build static site
-        print("Building static site...")
-        freezer.freeze()
-        print("Static site built successfully!")
-    else:
-        port = int(os.getenv('PORT', 5000))
-        debug = os.getenv('FLASK_ENV') == 'development'
-        print("🚀 Starting the application...")
-        print(f"Visit http://localhost:{port} to see the web interface")
-        app.run(host='0.0.0.0', port=port, debug=debug) 
+    port = int(os.getenv('PORT', 5000))
+    debug = os.getenv('FLASK_ENV') == 'development'
+    print("🚀 Starting the application...")
+    print(f"Visit http://localhost:{port} to see the web interface")
+    app.run(host='0.0.0.0', port=port, debug=debug) 
