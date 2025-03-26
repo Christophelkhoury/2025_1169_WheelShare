@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+{% block title %}Edit Profile - WheelShare{% endblock %}
+
+{% block content %}
+<div class="edit-profile-page">
+    <div class="page-header">
+        <h1>Edit Profile</h1>
+        <p class="subtitle">Update your personal information</p>
+    </div>
+
+    <div class="edit-profile-container">
+        <form class="edit-profile-form" method="POST">
+            <div class="form-section">
+                <h3>Profile Picture</h3>
+                <div class="profile-picture-upload">
+                    <div class="profile-picture">
+                        <img src="https://picsum.photos/128/128" alt="Profile Picture">
+                        <button type="button" class="change-picture-btn">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                    </div>
+                    <input type="file" id="profile_picture" name="profile_picture" accept="image/*" hidden>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Personal Information</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" class="form-input" 
+                               value="{{ user.name }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" class="form-input" 
+                               value="{{ user.email }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" class="form-input" 
+                               value="{{ user.phone }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="university">University</label>
+                        <select id="university" name="university" class="form-input" required>
+                            <option value="">Select University</option>
+                            <option value="LAU" {% if user.university == 'LAU' %}selected{% endif %}>
+                                Lebanese American University (LAU)
+                            </option>
+                            <option value="AUB" {% if user.university == 'AUB' %}selected{% endif %}>
+                                American University of Beirut (AUB)
+                            </option>
+                            <option value="USJ" {% if user.university == 'USJ' %}selected{% endif %}>
+                                Université Saint-Joseph (USJ)
+                            </option>
+                            <option value="USEK" {% if user.university == 'USEK' %}selected{% endif %}>
+                                Holy Spirit University of Kaslik (USEK)
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Bio</h3>
+                <div class="form-group">
+                    <textarea id="bio" name="bio" class="form-input" rows="4" 
+                              placeholder="Tell us about yourself...">{{ user.bio }}</textarea>
+                </div>
+            </div>
+
+            {% if user.is_driver %}
+            <div class="form-section">
+                <h3>Vehicle Information</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="car_model">Car Model</label>
+                        <input type="text" id="car_model" name="car_model" class="form-input" 
+                               value="{{ user.car_model }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="car_color">Car Color</label>
+                        <input type="text" id="car_color" name="car_color" class="form-input" 
+                               value="{{ user.car_color }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="license_plate">License Plate</label>
+                        <input type="text" id="license_plate" name="license_plate" class="form-input" 
+                               value="{{ user.license_plate }}" required>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <button type="button" class="btn btn-outline" onclick="history.back()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.edit-profile-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.page-header {
+    margin-bottom: 24px;
+}
+
+.page-header h1 {
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: var(--gray);
+}
+
+.edit-profile-container {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-section {
+    margin-bottom: 32px;
+}
+
+.form-section h3 {
+    font-size: 1.25rem;
+    margin-bottom: 16px;
+    color: var(--text-color);
+}
+
+.profile-picture-upload {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.profile-picture {
+    position: relative;
+    width: 128px;
+    height: 128px;
+}
+
+.profile-picture img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.change-picture-btn {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: var(--white);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-end;
+    margin-top: 32px;
+}
+
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .edit-profile-container {
+        padding: 24px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions button {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelector('.change-picture-btn').addEventListener('click', function() {
+    document.getElementById('profile_picture').click();
+});
+
+document.getElementById('profile_picture').addEventListener('change', function(e) {
+    if (e.target.files && e.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.querySelector('.profile-picture img').src = e.target.result;
+        };
+        reader.readAsDataURL(e.target.files[0]);
+    }
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,346 @@
+{% extends "base.html" %}
+{% block title %}My Bookings - WheelShare{% endblock %}
+
+{% block content %}
+<div class="bookings-page">
+    <div class="page-header">
+        <h1>My Bookings</h1>
+        <p class="subtitle">Manage your ride bookings</p>
+    </div>
+
+    <div class="bookings-tabs">
+        <button class="tab-button active" onclick="showTab('upcoming')">Upcoming</button>
+        <button class="tab-button" onclick="showTab('past')">Past</button>
+        <button class="tab-button" onclick="showTab('cancelled')">Cancelled</button>
+    </div>
+
+    <div class="bookings-container">
+        <div id="upcoming" class="tab-content active">
+            {% if not bookings %}
+            <div class="empty-state">
+                <i class="fas fa-calendar"></i>
+                <h3>No Upcoming Bookings</h3>
+                <p>You don't have any upcoming rides booked.</p>
+                <a href="/trips" class="btn btn-primary">Find a Ride</a>
+            </div>
+            {% else %}
+            <div class="bookings-grid">
+                {% for booking in bookings %}
+                <div class="booking-card">
+                    <div class="booking-header">
+                        <div class="driver-info">
+                            <img src="https://picsum.photos/32/32?random={{ booking.id }}" alt="{{ booking.driver_name }}" class="driver-avatar">
+                            <div>
+                                <span class="driver-name">{{ booking.driver_name }}</span>
+                                <span class="booking-date">{{ booking.date }}</span>
+                            </div>
+                        </div>
+                        <div class="booking-status">
+                            <span class="status-badge confirmed">Confirmed</span>
+                        </div>
+                    </div>
+                    <div class="booking-details">
+                        <div class="route-info">
+                            <div class="route-point">
+                                <i class="fas fa-circle start-point"></i>
+                                <span>{{ booking.from_location }}</span>
+                            </div>
+                            <div class="route-line"></div>
+                            <div class="route-point">
+                                <i class="fas fa-map-marker-alt end-point"></i>
+                                <span>{{ booking.to_location }}</span>
+                            </div>
+                        </div>
+                        <div class="trip-info">
+                            <div class="info-item">
+                                <i class="far fa-clock"></i>
+                                <span>{{ booking.departure_time }}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <span>{{ "{:,}".format(booking.price) }} L.L.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="booking-actions">
+                        <button class="btn btn-secondary" onclick="location.href='/chat/{{ booking.id }}'">
+                            <i class="fas fa-comment"></i> Message Driver
+                        </button>
+                        <form action="{{ url_for('cancel_booking', booking_id=booking.id) }}" method="POST" class="booking-actions">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-times"></i>
+                                Cancel Booking
+                            </button>
+                            <a href="{{ url_for('my_bookings') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i>
+                                Back
+                            </a>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div id="past" class="tab-content">
+            <div class="empty-state">
+                <i class="fas fa-history"></i>
+                <h3>No Past Bookings</h3>
+                <p>You haven't completed any rides yet.</p>
+            </div>
+        </div>
+
+        <div id="cancelled" class="tab-content">
+            <div class="empty-state">
+                <i class="fas fa-ban"></i>
+                <h3>No Cancelled Bookings</h3>
+                <p>You don't have any cancelled rides.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.bookings-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: var(--gray);
+}
+
+.bookings-tabs {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    border-bottom: 2px solid var(--background-color);
+    padding-bottom: 8px;
+}
+
+.tab-button {
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    font-size: 1rem;
+    color: var(--gray);
+    cursor: pointer;
+    position: relative;
+}
+
+.tab-button.active {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--primary-color);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 48px;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: var(--gray);
+    margin-bottom: 16px;
+}
+
+.empty-state h3 {
+    margin-bottom: 8px;
+}
+
+.empty-state p {
+    color: var(--gray);
+    margin-bottom: 24px;
+}
+
+.bookings-grid {
+    display: grid;
+    gap: 16px;
+}
+
+.booking-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.booking-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--background-color);
+}
+
+.driver-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.driver-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.driver-name {
+    display: block;
+    font-weight: 600;
+}
+
+.booking-date {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--gray);
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.status-badge.confirmed {
+    background-color: #E8F5E9;
+    color: #2E7D32;
+}
+
+.route-info {
+    margin-bottom: 16px;
+}
+
+.route-point {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.route-line {
+    width: 2px;
+    height: 24px;
+    background-color: var(--primary-color);
+    margin-left: 7px;
+}
+
+.start-point {
+    color: var(--primary-color);
+    font-size: 0.8rem;
+}
+
+.end-point {
+    color: var(--primary-color);
+}
+
+.trip-info {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 16px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--gray);
+}
+
+.booking-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.booking-actions .btn {
+    flex: 1;
+}
+
+.btn-danger {
+    background-color: #DC3545;
+    color: var(--white);
+}
+
+.btn-danger:hover {
+    background-color: #C82333;
+}
+
+@media (max-width: 768px) {
+    .bookings-tabs {
+        overflow-x: auto;
+        padding-bottom: 16px;
+    }
+    
+    .booking-actions {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function showTab(tabId) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    // Remove active class from all tab buttons
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
+    });
+    
+    // Show selected tab content
+    document.getElementById(tabId).classList.add('active');
+    
+    // Add active class to clicked button
+    event.target.classList.add('active');
+}
+
+function cancelBooking(bookingId) {
+    if (confirm('Are you sure you want to cancel this booking?')) {
+        // Add your cancellation logic here
+        console.log('Cancelling booking:', bookingId);
+    }
+}
+</script>
+{% endblock %} 

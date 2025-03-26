@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+{% block title %}Notifications - WheelShare{% endblock %}
+
+{% block content %}
+<div class="notifications-page">
+    <div class="page-header">
+        <h1>Notifications</h1>
+        <div class="header-actions">
+            <button class="btn btn-text" onclick="markAllAsRead()">
+                <i class="fas fa-check-double"></i> Mark all as read
+            </button>
+        </div>
+    </div>
+
+    <div class="notifications-container">
+        {% if not notifications %}
+        <div class="empty-state">
+            <i class="far fa-bell"></i>
+            <h3>No Notifications</h3>
+            <p>You're all caught up! Check back later for updates.</p>
+        </div>
+        {% else %}
+        <div class="notifications-list">
+            {% for notification in notifications %}
+            <div class="notification-item {% if not notification.read %}unread{% endif %}">
+                <div class="notification-icon">
+                    {% if notification.type == 'booking' %}
+                    <i class="fas fa-calendar-check"></i>
+                    {% elif notification.type == 'message' %}
+                    <i class="fas fa-comment"></i>
+                    {% elif notification.type == 'review' %}
+                    <i class="fas fa-star"></i>
+                    {% elif notification.type == 'reminder' %}
+                    <i class="fas fa-clock"></i>
+                    {% else %}
+                    <i class="fas fa-bell"></i>
+                    {% endif %}
+                </div>
+                <div class="notification-content">
+                    <div class="notification-header">
+                        <span class="notification-title">{{ notification.title }}</span>
+                        <span class="notification-time">{{ notification.time }}</span>
+                    </div>
+                    <p class="notification-message">{{ notification.message }}</p>
+                    {% if notification.action_url %}
+                    <a href="{{ notification.action_url }}" class="notification-action">
+                        {{ notification.action_text }}
+                    </a>
+                    {% endif %}
+                </div>
+                <button class="notification-menu" onclick="toggleNotificationMenu({{ notification.id }})">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.notifications-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.page-header h1 {
+    font-size: 2rem;
+}
+
+.btn-text {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-text:hover {
+    color: var(--primary-color-dark);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 48px;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: var(--gray);
+    margin-bottom: 16px;
+}
+
+.empty-state h3 {
+    margin-bottom: 8px;
+}
+
+.empty-state p {
+    color: var(--gray);
+}
+
+.notifications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.notification-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 16px;
+    padding: 16px;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s;
+}
+
+.notification-item.unread {
+    background-color: #F8F9FA;
+    border-left: 4px solid var(--primary-color);
+}
+
+.notification-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--background-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+}
+
+.notification-content {
+    min-width: 0;
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.notification-title {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.notification-time {
+    font-size: 0.9rem;
+    color: var(--gray);
+    white-space: nowrap;
+}
+
+.notification-message {
+    color: var(--gray);
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.notification-action {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.notification-action:hover {
+    text-decoration: underline;
+}
+
+.notification-menu {
+    background: none;
+    border: none;
+    color: var(--gray);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.notification-menu:hover {
+    background-color: var(--background-color);
+}
+
+@media (max-width: 768px) {
+    .notification-item {
+        grid-template-columns: auto 1fr;
+    }
+    
+    .notification-menu {
+        display: none;
+    }
+    
+    .notification-header {
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .notification-time {
+        font-size: 0.8rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function markAllAsRead() {
+    // Add your mark all as read logic here
+    console.log('Marking all notifications as read');
+}
+
+function toggleNotificationMenu(notificationId) {
+    // Add your notification menu toggle logic here
+    console.log('Toggling menu for notification:', notificationId);
+}
+</script>
+{% endblock %} 

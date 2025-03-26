@@ -1,0 +1,382 @@
+{% extends "base.html" %}
+{% block title %}Messages - WheelShare{% endblock %}
+
+{% block content %}
+<div class="messages-page">
+    <div class="messages-sidebar">
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search messages..." class="search-input">
+        </div>
+        <div class="conversations-list">
+            {% if not conversations %}
+            <div class="empty-state">
+                <i class="far fa-comments"></i>
+                <h3>No Messages</h3>
+                <p>Start a conversation by booking a ride!</p>
+                <a href="/trips" class="btn btn-primary">Find a Ride</a>
+            </div>
+            {% else %}
+            {% for conversation in conversations %}
+            <div class="conversation-item {% if conversation.unread %}unread{% endif %} {% if conversation.active %}active{% endif %}" onclick="loadConversation({{ conversation.id }})">
+                <img src="https://picsum.photos/40/40?random={{ conversation.id }}" alt="{{ conversation.name }}" class="user-avatar">
+                <div class="conversation-info">
+                    <div class="conversation-header">
+                        <span class="user-name">{{ conversation.name }}</span>
+                        <span class="last-time">{{ conversation.last_time }}</span>
+                    </div>
+                    <p class="last-message">{{ conversation.last_message }}</p>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="messages-content">
+        {% if active_conversation %}
+        <div class="chat-header">
+            <div class="chat-user">
+                <img src="https://picsum.photos/40/40?random={{ active_conversation.id }}" alt="{{ active_conversation.name }}" class="user-avatar">
+                <div class="user-info">
+                    <span class="user-name">{{ active_conversation.name }}</span>
+                    <span class="user-status">{{ active_conversation.status }}</span>
+                </div>
+            </div>
+            <div class="chat-actions">
+                <button class="btn btn-text">
+                    <i class="fas fa-phone"></i>
+                </button>
+                <button class="btn btn-text">
+                    <i class="fas fa-video"></i>
+                </button>
+                <button class="btn btn-text">
+                    <i class="fas fa-info-circle"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chat-messages">
+            {% for message in messages %}
+            <div class="message {% if message.sent_by_me %}sent{% else %}received{% endif %}">
+                <div class="message-content">
+                    {{ message.content }}
+                    <span class="message-time">{{ message.time }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="chat-input">
+            <button class="btn btn-text">
+                <i class="far fa-image"></i>
+            </button>
+            <textarea placeholder="Type a message..." class="message-input" rows="1"></textarea>
+            <button class="btn btn-text send-button">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+        {% else %}
+        <div class="empty-chat">
+            <i class="far fa-comment-dots"></i>
+            <h3>Select a Conversation</h3>
+            <p>Choose a conversation from the list to start messaging</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.messages-page {
+    height: calc(100vh - 64px);
+    display: grid;
+    grid-template-columns: 320px 1fr;
+}
+
+.messages-sidebar {
+    background: var(--white);
+    border-right: 1px solid var(--background-color);
+    display: flex;
+    flex-direction: column;
+}
+
+.search-bar {
+    padding: 16px;
+    border-bottom: 1px solid var(--background-color);
+    position: relative;
+}
+
+.search-bar i {
+    position: absolute;
+    left: 28px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray);
+}
+
+.search-input {
+    width: 100%;
+    padding: 8px 16px 8px 36px;
+    border: 1px solid var(--background-color);
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.conversations-list {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.conversation-item {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.conversation-item:hover {
+    background-color: var(--background-color);
+}
+
+.conversation-item.active {
+    background-color: var(--background-color);
+}
+
+.conversation-item.unread .user-name {
+    font-weight: 600;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.conversation-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.conversation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 4px;
+}
+
+.user-name {
+    font-weight: 500;
+}
+
+.last-time {
+    font-size: 0.8rem;
+    color: var(--gray);
+}
+
+.last-message {
+    color: var(--gray);
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.messages-content {
+    display: flex;
+    flex-direction: column;
+    background: var(--white);
+}
+
+.chat-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--background-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-status {
+    font-size: 0.8rem;
+    color: var(--gray);
+}
+
+.chat-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.message {
+    display: flex;
+    max-width: 70%;
+}
+
+.message.sent {
+    margin-left: auto;
+}
+
+.message.received {
+    margin-right: auto;
+}
+
+.message-content {
+    padding: 12px 16px;
+    border-radius: 16px;
+    position: relative;
+}
+
+.message.sent .message-content {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.message.received .message-content {
+    background-color: var(--background-color);
+}
+
+.message-time {
+    font-size: 0.8rem;
+    color: var(--gray);
+    margin-top: 4px;
+    display: block;
+}
+
+.message.sent .message-time {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.chat-input {
+    padding: 16px;
+    border-top: 1px solid var(--background-color);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.message-input {
+    flex: 1;
+    border: none;
+    resize: none;
+    padding: 8px;
+    font-size: 0.9rem;
+    max-height: 120px;
+}
+
+.message-input:focus {
+    outline: none;
+}
+
+.send-button {
+    color: var(--primary-color);
+}
+
+.empty-chat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray);
+    padding: 24px;
+    text-align: center;
+}
+
+.empty-chat i {
+    font-size: 3rem;
+    margin-bottom: 16px;
+}
+
+.empty-chat h3 {
+    margin-bottom: 8px;
+}
+
+.empty-state {
+    padding: 24px;
+    text-align: center;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: var(--gray);
+    margin-bottom: 16px;
+}
+
+.empty-state h3 {
+    margin-bottom: 8px;
+}
+
+.empty-state p {
+    color: var(--gray);
+    margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+    .messages-page {
+        grid-template-columns: 1fr;
+    }
+    
+    .messages-sidebar {
+        display: none;
+    }
+    
+    .messages-sidebar.active {
+        display: flex;
+        position: fixed;
+        top: 64px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 100;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function loadConversation(conversationId) {
+    // Add your conversation loading logic here
+    console.log('Loading conversation:', conversationId);
+}
+
+// Auto-resize textarea
+document.querySelector('.message-input')?.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = this.scrollHeight + 'px';
+});
+
+// Scroll to bottom of messages
+const chatMessages = document.getElementById('chat-messages');
+if (chatMessages) {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+</script>
+{% endblock %} 

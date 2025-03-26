@@ -1,0 +1,191 @@
+<nav class="navbar">
+    <div class="nav-brand">
+        <a href="{{ url_for('home') }}" class="brand-link">
+            <i class="fas fa-car"></i>
+            <span>WheelShare</span>
+        </a>
+    </div>
+    
+    <div class="nav-links">
+        <a href="{{ url_for('trips') }}" class="nav-link">
+            <i class="fas fa-search"></i>
+            <span>Find Rides</span>
+        </a>
+        <a href="{{ url_for('new_trip') }}" class="nav-link">
+            <i class="fas fa-plus-circle"></i>
+            <span>Offer a Ride</span>
+        </a>
+        <a href="{{ url_for('my_rides') }}" class="nav-link">
+            <i class="fas fa-car"></i>
+            <span>My Rides</span>
+        </a>
+        <a href="{{ url_for('my_bookings') }}" class="nav-link">
+            <i class="fas fa-ticket-alt"></i>
+            <span>My Bookings</span>
+        </a>
+        <a href="{{ url_for('messages') }}" class="nav-link">
+            <i class="fas fa-comments"></i>
+            <span>Messages</span>
+        </a>
+    </div>
+
+    <div class="nav-profile" onclick="toggleProfileDropdown()">
+        <img src="https://picsum.photos/32/32" alt="Profile" class="profile-image">
+        <div class="profile-dropdown" id="profileDropdown">
+            <a href="{{ url_for('profile') }}" class="dropdown-item">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+            <a href="{{ url_for('payment_info') }}" class="dropdown-item">
+                <i class="fas fa-credit-card"></i>
+                <span>Payment Info</span>
+            </a>
+            <a href="{{ url_for('notifications') }}" class="dropdown-item">
+                <i class="fas fa-bell"></i>
+                <span>Notifications</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item text-danger">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sign Out</span>
+            </a>
+        </div>
+    </div>
+</nav>
+
+<style>
+.navbar {
+    background: var(--primary-color);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+}
+
+.brand-link {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.nav-link {
+    color: var(--white);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    transition: opacity 0.3s;
+}
+
+.nav-link:hover {
+    opacity: 0.8;
+}
+
+.nav-profile {
+    position: relative;
+    cursor: pointer;
+}
+
+.profile-image {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem 0;
+    min-width: 200px;
+    display: none;
+    margin-top: 0.5rem;
+}
+
+.profile-dropdown.show {
+    display: block;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.dropdown-item:hover {
+    background-color: var(--background-color);
+}
+
+.dropdown-divider {
+    height: 1px;
+    background-color: var(--background-color);
+    margin: 0.5rem 0;
+}
+
+.text-danger {
+    color: var(--danger-color);
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 1rem;
+    }
+
+    .nav-links {
+        display: none;
+    }
+
+    .nav-links.active {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--primary-color);
+        padding: 1rem;
+        gap: 1rem;
+    }
+}
+</style>
+
+<script>
+function toggleProfileDropdown() {
+    const dropdown = document.getElementById('profileDropdown');
+    dropdown.classList.toggle('show');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('profileDropdown');
+    const profile = document.querySelector('.nav-profile');
+    
+    if (!profile.contains(event.target) && dropdown.classList.contains('show')) {
+        dropdown.classList.remove('show');
+    }
+});
+</script> 

@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}Register as Passenger - WheelShare{% endblock %}
+
+{% block content %}
+<div class="register-page">
+    <div class="register-container">
+        <h1>Register as a Passenger</h1>
+        <p class="subtitle">Find affordable rides to your university</p>
+
+        <form class="register-form" method="POST">
+            <div class="form-section">
+                <h3>Personal Information</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="university">University</label>
+                        <select id="university" name="university" class="form-input">
+                            <option value="">Select University</option>
+                            <option value="LAU">Lebanese American University (LAU)</option>
+                            <option value="AUB">American University of Beirut (AUB)</option>
+                            <option value="USJ">Université Saint-Joseph (USJ)</option>
+                            <option value="USEK">Holy Spirit University of Kaslik (USEK)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Account Security</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_password">Confirm Password</label>
+                        <input type="password" id="confirm_password" name="confirm_password" class="form-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+                <p class="login-link">Already have an account? <a href="/login">Login here</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.register-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.register-container {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.register-container h1 {
+    margin-bottom: 8px;
+    color: var(--text-color);
+}
+
+.subtitle {
+    color: var(--gray);
+    margin-bottom: 32px;
+}
+
+.form-section {
+    margin-bottom: 32px;
+}
+
+.form-section h3 {
+    font-size: 1.25rem;
+    margin-bottom: 16px;
+    color: var(--text-color);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.form-actions {
+    margin-top: 32px;
+    text-align: center;
+}
+
+.login-link {
+    margin-top: 16px;
+    color: var(--gray);
+}
+
+.login-link a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .register-container {
+        padding: 24px;
+    }
+}
+</style>
+{% endblock %} 
