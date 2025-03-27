@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify, request, redirect, url_for, session, flash
-import datetime
+from flask_session import Session
+from datetime import datetime, timedelta
 import os
 from dotenv import load_dotenv
 import sys
@@ -8,8 +9,13 @@ import sys
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = 'your-secret-key-here'
-app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.secret_key = os.getenv('SECRET_KEY', 'your-secret-key-here')
+app.config['TEMPLATES_AUTO_RELOAD'] = False  # Disable auto-reload for better performance
+app.config['SESSION_TYPE'] = 'filesystem'  # Use filesystem for session storage
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)  # Set session lifetime
+
+# Initialize Flask-Session
+Session(app)
 
 # Sample data for demonstration
 SAMPLE_TRIPS = [
@@ -102,107 +108,211 @@ SAMPLE_BOOKINGS = []
 def home():
     return render_template('home.html')
 
-@app.route('/create-account')
-def create_account():
-    return render_template('create_account.html')
+@app.route('/choose-role')
+def choose_role():
+    return render_template('choose_role.html')
 
-@app.route('/driver/register', methods=['GET', 'POST'])
-def driver_register():
+@app.route('/register/<role>', methods=['GET', 'POST'])
+def register(role):
+    if role not in ['driver', 'passenger']:
+        return redirect(url_for('choose_role'))
+        
     if request.method == 'POST':
-        flash('You are now signed in as a driver! Welcome to WheelShare.', 'success')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        name = request.form.get('name')
+        
+        # In a real app, you would validate and store in a database
+        # For now, we'll just store in session
+        session['user_id'] = 1  # Using a fixed ID for demo
+        session['user_role'] = role
+        session['user_name'] = name
+        session['user_email'] = email
+        
+        flash(f'Welcome to WheelShare! You are now registered as a {role}.', 'success')
         return redirect(url_for('home'))
-    return render_template('driver_register.html')
+        
+    return render_template('register.html', role=role)
 
-@app.route('/passenger/register', methods=['GET', 'POST'])
-def passenger_register():
+@app.route('/login/<role>', methods=['GET', 'POST'])
+def login(role):
+    if role not in ['driver', 'passenger']:
+        return redirect(url_for('choose_role'))
+        
     if request.method == 'POST':
-        flash('You are now signed in as a passenger! Welcome to WheelShare.', 'success')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        
+        # In a real app, you would validate against a database
+        # For now, we'll just set the session
+        session['user_id'] = 1
+        session['user_role'] = role
+        session['user_name'] = 'John Doe'
+        session['user_email'] = email
+        
+        flash(f'Welcome back! You are now logged in as a {role}.', 'success')
         return redirect(url_for('home'))
-    return render_template('passenger_register.html')
+        
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('You have been logged out successfully.', 'success')
+    return redirect(url_for('home'))
 
 @app.route('/trips', methods=['GET', 'POST'])
 def trips():
+    if not session.get('user_id'):
+        flash('Please log in to view available trips.', 'error')
+        return redirect(url_for('login', role='passenger'))
+        
+    if session.get('user_role') != 'passenger':
+        flash('Only passengers can view available trips.', 'error')
+        return redirect(url_for('home'))
+    
     if request.method == 'POST':
         # Handle search/filter form submission
-        return render_template('trips.html', trips=SAMPLE_TRIPS)
+        university = request.form.get('university')
+        departure = request.form.get('departure')
+        day = request.form.get('day')
+        
+        # Filter trips based on criteria
+        filtered_trips = SAMPLE_TRIPS
+        if university:
+            filtered_trips = [trip for trip in filtered_trips if trip['to_location'] == university]
+        if departure:
+            filtered_trips = [trip for trip in filtered_trips if trip['from_location'] == departure]
+        if day:
+            filtered_trips = [trip for trip in filtered_trips if day in trip.get('days', [])]
+            
+        return render_template('trips.html', trips=filtered_trips)
+        
     return render_template('trips.html', trips=SAMPLE_TRIPS)
 
 @app.route('/trips/new', methods=['GET', 'POST'])
 def new_trip():
+    if not session.get('user_id'):
+        flash('Please log in to create a trip.', 'error')
+        return redirect(url_for('login', role='driver'))
+        
+    if session.get('user_role') != 'driver':
+        flash('Only drivers can create trips.', 'error')
+        return redirect(url_for('home'))
+    
     if request.method == 'POST':
-        # Here you would typically:
-        # 1. Validate the form data
-        # 2. Create a new trip in the database
-        # 3. Handle any file uploads
-        # For now, we'll just redirect to the trips page
+        # Get form data
+        from_location = request.form.get('from_location')
+        to_location = request.form.get('to_location')
+        departure_date = request.form.get('departure_date')
+        departure_time = request.form.get('departure_time')
+        available_seats = int(request.form.get('available_seats'))
+        price_per_seat = int(request.form.get('price_per_seat'))
+        notes = request.form.get('notes')
+        
+        # Create new trip
+        new_trip = {
+            'id': len(SAMPLE_TRIPS) + 1,
+            'driver_name': session.get('user_name', 'Unknown Driver'),
+            'from_location': from_location,
+            'to_location': to_location,
+            'date': departure_date,
+            'departure_time': departure_time,
+            'price_per_seat': price_per_seat,
+            'available_seats': available_seats,
+            'status': 'active',
+            'notes': notes,
+            'driver_id': session.get('user_id')
+        }
+        
+        # Add to sample trips
+        SAMPLE_TRIPS.append(new_trip)
+        
         flash('Trip created successfully!', 'success')
-        return redirect(url_for('trips'))
+        return redirect(url_for('my_rides'))
+        
     return render_template('create_trip.html')
 
-@app.route('/trips/mine', methods=['GET', 'POST'])
+@app.route('/my-rides')
 def my_rides():
-    if request.method == 'POST':
-        # Handle ride cancellation
-        trip_id = request.form.get('trip_id')
-        trip = next((t for t in SAMPLE_TRIPS if t['id'] == int(trip_id)), None)
-        if trip:
-            trip['status'] = 'cancelled'
-            flash('Ride cancelled successfully.', 'success')
-        return redirect(url_for('my_rides'))
-    return render_template('my_rides.html', trips=SAMPLE_TRIPS)
+    if not session.get('user_id'):
+        flash('Please log in to view your rides.', 'error')
+        return redirect(url_for('login', role='driver'))
+        
+    if session.get('user_role') != 'driver':
+        flash('Only drivers can access this page.', 'error')
+        return redirect(url_for('home'))
+    
+    # Get all trips created by the current driver
+    driver_trips = [trip for trip in SAMPLE_TRIPS if trip.get('driver_id') == session.get('user_id')]
+    return render_template('my_rides.html', trips=driver_trips)
 
 @app.route('/trip/<int:trip_id>', methods=['GET', 'POST'])
 def trip_details(trip_id):
     trip = next((t for t in SAMPLE_TRIPS if t['id'] == trip_id), None)
     if not trip:
-        return 'Trip not found', 404
-        
+        flash('Trip not found.', 'error')
+        return redirect(url_for('home'))
+
     if request.method == 'POST':
-        # Handle booking submission
+        if not session.get('user_id'):
+            flash('Please log in to book a trip.', 'error')
+            return redirect(url_for('login'))
+
         seats = int(request.form.get('seats', 1))
-        days = request.form.getlist('days')
-        
-        # Create a new booking
+        if seats > trip['available_seats']:
+            flash('Not enough seats available.', 'error')
+            return redirect(url_for('trip_details', trip_id=trip_id))
+
+        # Create a booking
         booking = {
             'id': len(SAMPLE_BOOKINGS) + 1,
             'trip_id': trip_id,
-            'driver_name': trip['driver_name'],
-            'from_location': trip['from_location'],
-            'to_location': trip['to_location'],
-            'date': trip['date'],
-            'departure_time': trip['departure_time'],
-            'price': trip['price_per_seat'] * seats + 1000,  # Add service fee
-            'status': 'confirmed'
+            'user_id': session.get('user_id'),
+            'seats': seats,
+            'status': 'confirmed',
+            'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         }
-        
-        # Add booking to the list
         SAMPLE_BOOKINGS.append(booking)
-        
-        # Update trip availability
+
+        # Update trip seats
         trip['available_seats'] -= seats
-        
+
         flash('Booking successful! Your trip has been booked.', 'success')
-        return redirect(url_for('home'))
-        
+        return redirect(url_for('my_bookings'))
+
     return render_template('trip_details.html', trip=trip)
 
 @app.route('/bookings')
 def my_bookings():
-    # Here you would typically:
-    # 1. Get bookings from the database
-    # 2. Filter by user
-    # 3. Sort by date
-    bookings = [
-        {
-            'id': 1,
-            'from_location': 'Beirut',
-            'to_location': 'AUB',
-            'departure_time': '8:00 AM',
-            'price': 25000,
-            'status': 'confirmed'
-        }
-    ]
-    return render_template('my_bookings.html', bookings=bookings)
+    if not session.get('user_id'):
+        flash('Please log in to view your bookings.', 'error')
+        return redirect(url_for('login'))
+
+    # Get all bookings for the current user
+    user_bookings = [b for b in SAMPLE_BOOKINGS if b['user_id'] == session.get('user_id')]
+    
+    # Get trip details for each booking
+    bookings_with_trips = []
+    for booking in user_bookings:
+        trip = next((t for t in SAMPLE_TRIPS if t['id'] == booking['trip_id']), None)
+        if trip:
+            booking_info = {
+                'id': booking['id'],
+                'trip_id': trip['id'],
+                'driver_name': trip['driver_name'],
+                'from_location': trip['from_location'],
+                'to_location': trip['to_location'],
+                'date': trip['date'],
+                'departure_time': trip['departure_time'],
+                'seats': booking['seats'],
+                'price': trip['price_per_seat'] * booking['seats'],
+                'status': booking['status'],
+                'created_at': booking['created_at']
+            }
+            bookings_with_trips.append(booking_info)
+
+    return render_template('my_bookings.html', bookings=bookings_with_trips)
 
 @app.route('/bookings/<int:booking_id>/cancel', methods=['POST'])
 def cancel_booking(booking_id):

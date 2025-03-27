@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% block title %}Register - WheelShare{% endblock %}
+
+{% block content %}
+<div class="register-page">
+    <div class="register-container">
+        <div class="register-header">
+            <h1>Create Account</h1>
+            <p>Join WheelShare to start your journey</p>
+        </div>
+
+        <form method="POST" class="register-form">
+            <div class="form-group">
+                <label for="full_name">Full Name</label>
+                <div class="input-group">
+                    <input type="text" id="full_name" name="full_name" class="form-control" placeholder="Enter your full name">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <div class="input-group">
+                    <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email">
+                    <i class="fas fa-envelope"></i>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-group">
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Create a password">
+                    <button type="button" class="btn" onclick="togglePassword('password')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <div class="input-group">
+                    <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="Confirm your password">
+                    <button type="button" class="btn" onclick="togglePassword('confirm_password')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="role">I am a</label>
+                <select id="role" name="role" class="form-control">
+                    <option value="passenger">Passenger</option>
+                    <option value="driver">Driver</option>
+                </select>
+            </div>
+
+            <div id="driver-fields" class="driver-fields" style="display: none;">
+                <div class="form-group">
+                    <label for="car_model">Car Model</label>
+                    <div class="input-group">
+                        <input type="text" id="car_model" name="car_model" class="form-control" placeholder="Enter your car model">
+                        <i class="fas fa-car"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="license_plate">License Plate</label>
+                    <div class="input-group">
+                        <input type="text" id="license_plate" name="license_plate" class="form-control" placeholder="Enter your license plate">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="terms" name="terms" class="form-checkbox">
+                    <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">
+                <i class="fas fa-user-plus"></i> Create Account
+            </button>
+        </form>
+
+        <div class="register-footer">
+            <p>Already have an account? <a href="{{ url_for('login', role='passenger') }}">Sign in</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.register-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+}
+
+.register-container {
+    width: 100%;
+    max-width: 480px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    padding: 2.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.register-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.register-header h1 {
+    font-size: 2rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.register-header p {
+    color: var(--text-secondary);
+}
+
+.register-form {
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.input-group {
+    position: relative;
+}
+
+.input-group .form-control {
+    padding-right: 3rem;
+}
+
+.input-group i,
+.input-group .btn {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+}
+
+.form-checkbox {
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-right: 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+}
+
+.checkbox-wrapper a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.checkbox-wrapper a:hover {
+    text-decoration: underline;
+}
+
+.btn-block {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.register-footer {
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.register-footer a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.register-footer a:hover {
+    text-decoration: underline;
+}
+
+.driver-fields {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 480px) {
+    .register-container {
+        padding: 2rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function togglePassword(inputId) {
+    const input = document.getElementById(inputId);
+    const icon = input.nextElementSibling.querySelector('i');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+
+document.getElementById('role').addEventListener('change', function() {
+    const driverFields = document.getElementById('driver-fields');
+    driverFields.style.display = this.value === 'driver' ? 'block' : 'none';
+});
+</script>
+{% endblock %} 

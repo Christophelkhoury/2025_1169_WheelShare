@@ -1,105 +1,110 @@
 {% extends "base.html" %}
-{% block title %}Available Rides - WheelShare{% endblock %}
+{% block title %}Find Rides - WheelShare{% endblock %}
 
 {% block content %}
 <div class="trips-page">
-    <div class="filters-section">
-        <h2>Find a Ride</h2>
-        <form class="filters-form" method="GET">
-            <div class="form-group">
-                <label for="university">University</label>
-                <select id="university" name="university" class="form-input">
-                    <option value="">Select University</option>
-                    <option value="LAU">Lebanese American University (LAU)</option>
-                    <option value="AUB">American University of Beirut (AUB)</option>
-                    <option value="USJ">Université Saint-Joseph (USJ)</option>
-                    <option value="USEK">Holy Spirit University of Kaslik (USEK)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="departure">Departure Area</label>
-                <select id="departure" name="departure" class="form-input">
-                    <option value="">Select Area</option>
-                    <option value="Jounieh">Jounieh</option>
-                    <option value="Tripoli">Tripoli</option>
-                    <option value="Saida">Saida</option>
-                    <option value="Zahle">Zahle</option>
-                    <option value="Batroun">Batroun</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="day">Day</label>
-                <select id="day" name="day" class="form-input">
-                    <option value="">Select Day</option>
-                    <option value="Monday">Monday</option>
-                    <option value="Tuesday">Tuesday</option>
-                    <option value="Wednesday">Wednesday</option>
-                    <option value="Thursday">Thursday</option>
-                    <option value="Friday">Friday</option>
-                </select>
-            </div>
-            <button type="submit" class="btn btn-primary">Search Rides</button>
-        </form>
+    <div class="page-header">
+        <h1>Find a Ride</h1>
+        <p>Search for available rides or view all trips</p>
     </div>
 
-    <div class="trips-section">
-        <div class="trips-header">
-            <h2>Available Rides</h2>
-            <div class="trips-actions">
-                <button class="btn btn-secondary" onclick="location.href='/trips/new'">
-                    <i class="fas fa-plus"></i> Offer a Ride
-                </button>
-            </div>
+    <div class="trips-container">
+        <div class="filters-section" style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); padding: 1.5rem; border-radius: 1rem; margin-bottom: 2rem;">
+            <form method="POST" class="search-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="from_location">From</label>
+                        <div class="input-group">
+                            <input type="text" id="from_location" name="from_location" class="form-control" placeholder="Enter departure location">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="to_location">To</label>
+                        <div class="input-group">
+                            <input type="text" id="to_location" name="to_location" class="form-control" placeholder="Enter destination">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date">Date</label>
+                        <div class="input-group">
+                            <input type="date" id="date" name="date" class="form-control">
+                            <i class="far fa-calendar"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="seats">Seats</label>
+                        <div class="input-group">
+                            <input type="number" id="seats" name="seats" class="form-control" min="1" placeholder="Number of seats">
+                            <i class="fas fa-chair"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Search Rides
+                    </button>
+                </div>
+            </form>
         </div>
 
         <div class="trips-grid">
             {% for trip in trips %}
-            <div class="trip-card">
+            <div class="trip-card" style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); padding: 1.5rem; border-radius: 1rem;">
                 <div class="trip-header">
                     <div class="driver-info">
-                        <img src="https://picsum.photos/32/32?random={{ trip.id }}" alt="{{ trip.driver_name }}" class="driver-avatar">
-                        <span class="driver-name">{{ trip.driver_name }}</span>
+                        <img src="https://picsum.photos/50/50?random={{ trip.id }}" alt="{{ trip.driver_name }}" class="driver-avatar" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--primary-color);">
+                        <div>
+                            <h3 style="margin: 0;">{{ trip.driver_name }}</h3>
+                            <div class="rating" style="color: #FFD700; font-size: 0.9rem;">
+                                <i class="fas fa-star"></i> 4.8
+                            </div>
+                        </div>
                     </div>
                     <div class="trip-price">
-                        <span class="price-amount">{{ "{:,}".format(trip.price_per_seat) }} L.L.</span>
-                        <span class="price-per">per seat</span>
+                        {{ trip.price }} LBP
                     </div>
                 </div>
+
+                <div class="trip-route">
+                    <div class="location" style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                        <i class="fas fa-map-marker-alt" style="color: var(--primary-color); margin-right: 0.5rem;"></i>
+                        <span>{{ trip.from_location }}</span>
+                    </div>
+                    <div class="route-line" style="height: 2px; background: var(--primary-color); margin: 0.5rem 0;"></div>
+                    <div class="location" style="display: flex; align-items: center;">
+                        <i class="fas fa-map-marker-alt" style="color: var(--primary-color); margin-right: 0.5rem;"></i>
+                        <span>{{ trip.to_location }}</span>
+                    </div>
+                </div>
+
                 <div class="trip-details">
-                    <div class="trip-route">
-                        <div class="route-point">
-                            <i class="fas fa-circle start-point"></i>
-                            <span>{{ trip.from_location }}</span>
-                        </div>
-                        <div class="route-line"></div>
-                        <div class="route-point">
-                            <i class="fas fa-map-marker-alt end-point"></i>
-                            <span>{{ trip.to_location }}</span>
-                        </div>
+                    <div class="detail-item" style="background: rgba(255, 255, 255, 0.05); padding: 0.75rem; border-radius: 0.5rem;">
+                        <i class="far fa-calendar" style="color: var(--primary-color); margin-bottom: 0.25rem;"></i>
+                        <p style="margin: 0;">{{ trip.date }}</p>
                     </div>
-                    <div class="trip-info">
-                        <div class="info-item">
-                            <i class="far fa-clock"></i>
-                            <span>{{ trip.departure_time }}</span>
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-user-friends"></i>
-                            <span>{{ trip.available_seats }} seats available</span>
-                        </div>
+                    <div class="detail-item" style="background: rgba(255, 255, 255, 0.05); padding: 0.75rem; border-radius: 0.5rem;">
+                        <i class="far fa-clock" style="color: var(--primary-color); margin-bottom: 0.25rem;"></i>
+                        <p style="margin: 0;">{{ trip.time }}</p>
                     </div>
-                    <div class="trip-days">
-                        {% for day in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'] %}
-                        <span class="day-badge {% if day in trip.days %}active{% endif %}">
-                            {{ day }}
-                        </span>
-                        {% endfor %}
+                    <div class="detail-item" style="background: rgba(255, 255, 255, 0.05); padding: 0.75rem; border-radius: 0.5rem;">
+                        <i class="fas fa-chair" style="color: var(--primary-color); margin-bottom: 0.25rem;"></i>
+                        <p style="margin: 0;">{{ trip.seats }} seats</p>
                     </div>
                 </div>
+
                 <div class="trip-actions">
-                    <a href="{{ url_for('trip_details', trip_id=trip.id) }}" class="btn btn-primary">View Details</a>
-                    <button class="btn btn-secondary" onclick="location.href='/chat/{{ trip.id }}'">
-                        <i class="fas fa-comment"></i> Contact Driver
-                    </button>
+                    <a href="{{ url_for('trip_details', trip_id=trip.id) }}" class="btn btn-primary">
+                        <i class="fas fa-info-circle"></i> View Details
+                    </a>
+                    <a href="{{ url_for('chat', conversation_id=trip.id, user_id=trip.driver_id) }}" class="btn btn-outline">
+                        <i class="fas fa-comments"></i> Message
+                    </a>
                 </div>
             </div>
             {% endfor %}
@@ -111,177 +116,107 @@
 {% block extra_css %}
 <style>
 .trips-page {
+    padding: 2rem;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 24px;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.page-header p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+.search-form {
+    margin-bottom: 0;
+}
+
+.form-row {
     display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
-.filters-section {
-    background: var(--white);
-    padding: 24px;
-    border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    height: fit-content;
-}
-
-.filters-form {
+.form-actions {
     display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.form-group label {
-    font-weight: 600;
-    color: var(--text-color);
-}
-
-.trips-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
+    justify-content: flex-end;
 }
 
 .trips-grid {
     display: grid;
-    gap: 16px;
-}
-
-.trip-card {
-    background: var(--white);
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
 }
 
 .trip-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--background-color);
+    margin-bottom: 1.5rem;
 }
 
 .driver-info {
     display: flex;
     align-items: center;
-    gap: 8px;
-}
-
-.driver-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.driver-name {
-    font-weight: 600;
+    gap: 1rem;
 }
 
 .trip-price {
-    text-align: right;
-}
-
-.price-amount {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     font-weight: 600;
     color: var(--primary-color);
 }
 
-.price-per {
-    font-size: 0.9rem;
-    color: var(--gray);
-}
-
 .trip-route {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 16px;
-    position: relative;
+    margin-bottom: 1.5rem;
 }
 
-.route-point {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.route-line {
-    width: 2px;
-    height: 24px;
-    background-color: var(--primary-color);
-    margin-left: 7px;
-}
-
-.start-point {
-    color: var(--primary-color);
-    font-size: 0.8rem;
-}
-
-.end-point {
-    color: var(--primary-color);
-}
-
-.trip-info {
-    display: flex;
-    gap: 16px;
-    margin-bottom: 16px;
-}
-
-.info-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--gray);
-}
-
-.trip-days {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 16px;
-}
-
-.day-badge {
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 0.9rem;
-    background-color: var(--background-color);
-    color: var(--gray);
-}
-
-.day-badge.active {
-    background-color: var(--primary-color);
-    color: var(--white);
+.trip-details {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .trip-actions {
     display: flex;
-    gap: 8px;
+    gap: 1rem;
 }
 
 .trip-actions .btn {
     flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
 @media (max-width: 768px) {
     .trips-page {
+        padding: 1rem;
+    }
+
+    .page-header h1 {
+        font-size: 2rem;
+    }
+
+    .form-row {
         grid-template-columns: 1fr;
     }
-    
-    .trip-actions {
-        flex-direction: column;
+
+    .trip-details {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 </style>

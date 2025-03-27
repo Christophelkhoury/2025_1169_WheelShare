@@ -1,352 +1,385 @@
 {% extends "base.html" %}
 
-{% block title %}WheelShare - University Carpooling{% endblock %}
+{% block title %}WheelShare - Home{% endblock %}
 
 {% block content %}
-<div class="home-page">
-    <div class="hero-section">
-        <div class="logo-container">
-            <h2 class="tagline">Drive Less, Share More</h2>
-        </div>
-        <p class="subtitle">Connect with fellow students for affordable and eco-friendly rides to university</p>
+<div class="home-container">
+    <div class="content-wrapper">
+        <h1 class="main-title">WheelShare</h1>
+        <p class="subtitle">Share rides, save money, connect with fellow students</p>
         
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">
-                        {{ message }}
-                    </div>
-                    {% if "driver" in message.lower() %}
-                        <div class="action-buttons">
-                            <a href="{{ url_for('new_trip') }}" class="action-button">
-                                <i class="fas fa-plus-circle"></i>
-                                Upload Your First Trip
-                            </a>
-                            <a href="{{ url_for('trips') }}" class="action-button secondary">
-                                <i class="fas fa-search"></i>
-                                Browse All Trips
-                            </a>
-                        </div>
-                    {% elif "passenger" in message.lower() %}
-                        <div class="action-buttons">
-                            <a href="{{ url_for('trips') }}" class="action-button">
-                                <i class="fas fa-search"></i>
-                                Browse Available Trips
-                            </a>
-                            <a href="{{ url_for('my_bookings') }}" class="action-button secondary">
-                                <i class="fas fa-calendar-check"></i>
-                                View My Bookings
-                            </a>
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            {% else %}
-                <div class="role-selection">
-                    <a href="/driver/register" class="role-card">
-                        <i class="fas fa-car"></i>
-                        <h3>I'm a Driver</h3>
-                        <p>Offer rides to university and share your travel costs</p>
-                    </a>
-                    <a href="/passenger/register" class="role-card">
-                        <i class="fas fa-walking"></i>
-                        <h3>I'm a Passenger</h3>
-                        <p>Find affordable rides to university from nearby drivers</p>
-                    </a>
-                </div>
-            {% endif %}
-        {% endwith %}
-    </div>
-
-    <div class="features-section">
-        <h2>Why Choose WheelShare?</h2>
-        <div class="features-grid">
-            <div class="feature-card">
-                <i class="fas fa-coins"></i>
-                <h3>Save Money</h3>
-                <p>Split travel costs and pay less than regular taxi fares</p>
-            </div>
-            <div class="feature-card">
-                <i class="fas fa-leaf"></i>
-                <h3>Eco-Friendly</h3>
-                <p>Reduce carbon emissions by sharing rides</p>
-            </div>
-            <div class="feature-card">
-                <i class="fas fa-users"></i>
-                <h3>Community</h3>
-                <p>Connect with students from your university</p>
-            </div>
-            <div class="feature-card">
-                <i class="fas fa-shield-alt"></i>
-                <h3>Safe Travel</h3>
-                <p>Verified university student drivers and passengers</p>
+        {% if not session.get('user_id') %}
+        <div class="cta-buttons">
+            <a href="{{ url_for('choose_role') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-rocket"></i>
+                <span>Get Started</span>
+            </a>
+        </div>
+        {% else %}
+        <div class="welcome-section">
+            <h2>Welcome back, {{ session.get('user_name') }}!</h2>
+            <div class="quick-actions">
+                {% if session.get('user_role') == 'passenger' %}
+                <a href="{{ url_for('trips') }}" class="action-btn">
+                    <i class="fas fa-search"></i>
+                    <span>Find a Trip</span>
+                </a>
+                <a href="{{ url_for('my_bookings') }}" class="action-btn">
+                    <i class="fas fa-ticket-alt"></i>
+                    <span>My Bookings</span>
+                </a>
+                {% else %}
+                <a href="{{ url_for('new_trip') }}" class="action-btn">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Offer a Ride</span>
+                </a>
+                <a href="{{ url_for('my_rides') }}" class="action-btn">
+                    <i class="fas fa-car"></i>
+                    <span>My Rides</span>
+                </a>
+                {% endif %}
             </div>
         </div>
-    </div>
-
-    <div class="how-it-works">
-        <h2>How It Works</h2>
-        <div class="steps-grid">
-            <div class="step-card">
-                <div class="step-number">1</div>
-                <h3>Sign Up</h3>
-                <p>Create an account as a driver or passenger using your university email</p>
-            </div>
-            <div class="step-card">
-                <div class="step-number">2</div>
-                <h3>Find or Post Rides</h3>
-                <p>Drivers post their university routes, passengers find convenient rides</p>
-            </div>
-            <div class="step-card">
-                <div class="step-number">3</div>
-                <h3>Connect & Ride</h3>
-                <p>Match with nearby students and share the journey to university</p>
-            </div>
-            <div class="step-card">
-                <div class="step-number">4</div>
-                <h3>Save & Share</h3>
-                <p>Split costs, reduce traffic, and make new friends</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="cta-section">
-        <h2>Ready to Start Sharing Rides?</h2>
-        <p>Join the WheelShare community and make your university commute better</p>
+        {% endif %}
     </div>
 </div>
-{% endblock %}
 
-{% block extra_css %}
+<section class="features-section">
+    <div class="container">
+        <h2 class="section-title">Why Choose WheelShare?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <h3>Save Money</h3>
+                <p>Split travel costs with fellow students and save on your daily commute.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Safe & Secure</h3>
+                <p>Travel with verified university students in a safe and comfortable environment.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3>Flexible Schedule</h3>
+                <p>Find rides that match your schedule with our easy-to-use platform.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Build Community</h3>
+                <p>Connect with other students and expand your university network.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="routes-section">
+    <div class="container">
+        <h2 class="section-title">Popular Routes</h2>
+        <div class="routes-grid">
+            <div class="route-card">
+                <div class="route-icon">
+                    <i class="fas fa-route"></i>
+                </div>
+                <h3>Beirut → AUB</h3>
+                <p>Frequent rides between Beirut and American University of Beirut.</p>
+            </div>
+            <div class="route-card">
+                <div class="route-icon">
+                    <i class="fas fa-route"></i>
+                </div>
+                <h3>Jounieh → LAU</h3>
+                <p>Regular trips from Jounieh to Lebanese American University.</p>
+            </div>
+            <div class="route-card">
+                <div class="route-icon">
+                    <i class="fas fa-route"></i>
+                </div>
+                <h3>Saida → BAU</h3>
+                <p>Daily rides between Saida and Beirut Arab University.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if not session.get('user_id') %}
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Ready to Start Your Journey?</h2>
+            <p>Join WheelShare today and experience hassle-free university commuting.</p>
+            <a href="{{ url_for('choose_role') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-user-plus"></i>
+                <span>Create Account</span>
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
 <style>
-.home-page {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 24px;
-}
-
-.hero-section {
-    text-align: center;
-    padding: 48px 0;
-    margin-bottom: 48px;
-}
-
-.logo-container {
-    max-width: 600px;
-    margin: 0 auto 32px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-}
-
-.hero-logo {
-    width: 100%;
-    max-width: 400px;
-    height: auto;
-}
-
-.tagline {
-    font-size: 1.5rem;
-    color: var(--text-color);
-    margin: 0;
-    font-weight: 500;
-}
-
-.subtitle {
-    font-size: 1.2rem;
-    color: var(--gray);
-    margin-bottom: 48px;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.role-selection {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.role-card {
-    background: var(--white);
-    padding: 32px;
-    border-radius: 12px;
-    text-align: center;
-    text-decoration: none;
-    color: var(--text-color);
-    transition: transform 0.3s, box-shadow 0.3s;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.role-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
-}
-
-.role-card i {
-    font-size: 2.5rem;
-    color: var(--primary-color);
-    margin-bottom: 16px;
-}
-
-.role-card h3 {
-    margin-bottom: 12px;
-}
-
-.features-section, .how-it-works {
-    padding: 48px 0;
-    text-align: center;
-}
-
-.features-grid, .steps-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-    margin-top: 32px;
-}
-
-.feature-card, .step-card {
-    background: var(--white);
-    padding: 24px;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.feature-card i {
-    font-size: 2rem;
-    color: var(--primary-color);
-    margin-bottom: 16px;
-}
-
-.step-number {
-    width: 40px;
-    height: 40px;
-    background: var(--primary-color);
-    color: var(--white);
-    border-radius: 50%;
+.home-container {
+    min-height: calc(100vh - 4rem);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin: 0 auto 16px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    position: relative;
+    overflow: hidden;
 }
 
-.cta-section {
+.home-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('/static/images/pattern.svg') repeat;
+    opacity: 0.1;
+}
+
+.content-wrapper {
+    position: relative;
+    z-index: 1;
     text-align: center;
-    padding: 48px 0;
-    background: var(--background-color);
-    border-radius: 12px;
-    margin-top: 48px;
+    max-width: 600px;
+    padding: var(--space-8);
+    background: var(--surface-light);
+    border-radius: 2rem;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.main-title {
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-4);
+    line-height: 1.2;
+}
+
+.subtitle {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-8);
 }
 
 .cta-buttons {
     display: flex;
-    gap: 16px;
     justify-content: center;
-    margin-top: 24px;
+    gap: var(--space-4);
 }
 
-.btn {
-    padding: 12px 32px;
-    border-radius: 24px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: transform 0.3s;
+.btn-lg {
+    padding: var(--space-4) var(--space-8);
+    font-size: 1.125rem;
 }
 
-.btn:hover {
-    transform: translateY(-2px);
+.welcome-section {
+    margin-top: var(--space-8);
 }
 
-.btn-primary {
-    background: var(--primary-color);
-    color: var(--white);
+.welcome-section h2 {
+    font-size: 2rem;
+    color: var(--text-primary);
+    margin-bottom: var(--space-6);
 }
 
-.btn-secondary {
-    background: var(--white);
-    color: var(--primary-color);
-    border: 2px solid var(--primary-color);
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4);
 }
 
-.alert {
-    padding: 16px 24px;
-    border-radius: 8px;
-    margin: 24px auto;
-    max-width: 600px;
-    font-weight: 500;
-}
-
-.alert-success {
-    background-color: #E8F5E9;
-    color: #2E7D32;
-    border: 1px solid #A5D6A7;
-}
-
-.action-buttons {
+.action-btn {
     display: flex;
-    gap: 16px;
-    justify-content: center;
-    margin-top: 24px;
-    flex-wrap: wrap;
-}
-
-.action-button {
-    display: inline-flex;
+    flex-direction: column;
     align-items: center;
-    gap: 8px;
-    padding: 12px 24px;
-    border-radius: 8px;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    background: var(--surface);
+    border-radius: 1rem;
     text-decoration: none;
+    color: var(--text-primary);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.action-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn i {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.action-btn span {
+    font-size: 0.875rem;
     font-weight: 500;
-    transition: all 0.3s ease;
-    background: var(--primary-color);
-    color: var(--white);
 }
 
-.action-button.secondary {
-    background: var(--white);
-    color: var(--primary-color);
-    border: 2px solid var(--primary-color);
+.features-section {
+    padding: var(--space-16) 0;
+    background: var(--surface);
 }
 
-.action-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: var(--space-12);
+    color: var(--text-primary);
 }
 
-.action-button i {
-    font-size: 1.2rem;
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-8);
+}
+
+.feature-card {
+    background: var(--surface-light);
+    border-radius: 1.5rem;
+    padding: var(--space-8);
+    text-align: center;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.feature-icon {
+    width: 4rem;
+    height: 4rem;
+    background: var(--gradient-primary);
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-4);
+}
+
+.feature-icon i {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+}
+
+.feature-card h3 {
+    font-size: 1.25rem;
+    margin-bottom: var(--space-2);
+    color: var(--text-primary);
+}
+
+.feature-card p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.routes-section {
+    padding: var(--space-16) 0;
+    background: var(--surface);
+}
+
+.routes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-8);
+}
+
+.route-card {
+    background: var(--surface-light);
+    border-radius: 1.5rem;
+    padding: var(--space-8);
+    text-align: center;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.route-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.route-icon {
+    width: 4rem;
+    height: 4rem;
+    background: var(--gradient-primary);
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-4);
+}
+
+.route-icon i {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+}
+
+.route-card h3 {
+    font-size: 1.25rem;
+    margin-bottom: var(--space-2);
+    color: var(--text-primary);
+}
+
+.route-card p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.cta-section {
+    padding: var(--space-16) 0;
+    background: var(--gradient-primary);
+    color: var(--text-primary);
+    text-align: center;
+}
+
+.cta-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.cta-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: var(--space-4);
+}
+
+.cta-content p {
+    font-size: 1.125rem;
+    margin-bottom: var(--space-8);
+    opacity: 0.9;
 }
 
 @media (max-width: 768px) {
-    .role-selection, .features-grid, .steps-grid {
-        grid-template-columns: 1fr;
+    .content-wrapper {
+        margin: var(--space-4);
+        padding: var(--space-6);
     }
     
-    .hero-section {
-        padding: 24px 0;
-    }
-    
-    .hero-section h1 {
-        font-size: 2rem;
+    .main-title {
+        font-size: 3rem;
     }
     
     .subtitle {
-        font-size: 1rem;
+        font-size: 1.125rem;
     }
     
-    .action-buttons {
-        flex-direction: column;
-        padding: 0 16px;
-    }
-    
-    .action-button {
-        width: 100%;
-        justify-content: center;
+    .quick-actions {
+        grid-template-columns: 1fr;
     }
 }
 </style>

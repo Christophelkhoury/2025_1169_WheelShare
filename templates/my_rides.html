@@ -5,135 +5,72 @@
 <div class="my-rides-page">
     <div class="page-header">
         <h1>My Rides</h1>
-        <p class="subtitle">Manage your offered rides</p>
-    </div>
-
-    <div class="rides-tabs">
-        <button class="tab-button active" onclick="showTab('upcoming')">Upcoming</button>
-        <button class="tab-button" onclick="showTab('past')">Past</button>
-        <button class="tab-button" onclick="showTab('cancelled')">Cancelled</button>
+        <p>Manage your offered rides</p>
     </div>
 
     <div class="rides-container">
-        <div id="upcoming" class="tab-content active">
-            {% if not trips %}
-            <div class="empty-state">
-                <i class="fas fa-car"></i>
-                <h3>No Upcoming Rides</h3>
-                <p>You haven't offered any rides yet.</p>
-                <a href="{{ url_for('new_trip') }}" class="btn btn-primary">Offer a Ride</a>
-            </div>
-            {% else %}
-            <div class="rides-grid">
-                {% for trip in trips %}
-                <div class="ride-card">
-                    <div class="ride-header">
-                        <div class="trip-info">
-                            <span class="trip-date">{{ trip.date }}</span>
-                            <span class="trip-time">{{ trip.departure_time }}</span>
-                        </div>
-                        <div class="trip-status">
-                            <span class="status-badge {{ trip.status }}">{{ trip.status }}</span>
-                        </div>
+        {% if trips %}
+        <div class="rides-grid">
+            {% for trip in trips %}
+            <div class="ride-card" style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); padding: 1.5rem; border-radius: 1rem;">
+                <div class="ride-header">
+                    <div class="ride-status {{ trip.status }}">
+                        {{ trip.status|title }}
                     </div>
-                    <div class="route-info">
-                        <div class="route-point">
-                            <i class="fas fa-circle start-point"></i>
-                            <span>{{ trip.from_location }}</span>
-                        </div>
-                        <div class="route-line"></div>
-                        <div class="route-point">
-                            <i class="fas fa-map-marker-alt end-point"></i>
-                            <span>{{ trip.to_location }}</span>
-                        </div>
-                    </div>
-                    <div class="trip-details">
-                        <div class="detail-item">
-                            <i class="fas fa-users"></i>
-                            <span>{{ trip.available_seats }} seats available</span>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-money-bill-wave"></i>
-                            <span>{{ "{:,}".format(trip.price_per_seat) }} L.L. per seat</span>
-                        </div>
-                    </div>
-                    <div class="ride-actions">
-                        <a href="{{ url_for('trip_details', trip_id=trip.id) }}" class="btn btn-primary">
-                            <i class="fas fa-eye"></i> View Details
-                        </a>
-                        <form action="{{ url_for('my_rides') }}" method="POST" style="flex: 1;">
-                            <input type="hidden" name="trip_id" value="{{ trip.id }}">
-                            <button type="submit" class="btn btn-danger">
-                                <i class="fas fa-times"></i> Cancel Ride
-                            </button>
-                        </form>
+                    <div class="ride-price">
+                        {{ trip.price }} LBP
                     </div>
                 </div>
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
 
-        <div id="past" class="tab-content">
-            <div class="empty-state">
-                <i class="fas fa-history"></i>
-                <h3>No Past Rides</h3>
-                <p>You haven't completed any rides yet.</p>
-            </div>
-        </div>
-
-        <div id="cancelled" class="tab-content">
-            {% set cancelled_trips = trips|selectattr('status', 'equalto', 'cancelled')|list %}
-            {% if not cancelled_trips %}
-            <div class="empty-state">
-                <i class="fas fa-ban"></i>
-                <h3>No Cancelled Rides</h3>
-                <p>You don't have any cancelled rides.</p>
-            </div>
-            {% else %}
-            <div class="rides-grid">
-                {% for trip in cancelled_trips %}
-                <div class="ride-card">
-                    <div class="ride-header">
-                        <div class="trip-info">
-                            <span class="trip-date">{{ trip.date }}</span>
-                            <span class="trip-time">{{ trip.departure_time }}</span>
-                        </div>
-                        <div class="trip-status">
-                            <span class="status-badge {{ trip.status }}">{{ trip.status }}</span>
-                        </div>
+                <div class="ride-route">
+                    <div class="location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>{{ trip.from_location }}</span>
                     </div>
-                    <div class="route-info">
-                        <div class="route-point">
-                            <i class="fas fa-circle start-point"></i>
-                            <span>{{ trip.from_location }}</span>
-                        </div>
-                        <div class="route-line"></div>
-                        <div class="route-point">
-                            <i class="fas fa-map-marker-alt end-point"></i>
-                            <span>{{ trip.to_location }}</span>
-                        </div>
-                    </div>
-                    <div class="trip-details">
-                        <div class="detail-item">
-                            <i class="fas fa-users"></i>
-                            <span>{{ trip.available_seats }} seats available</span>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-money-bill-wave"></i>
-                            <span>{{ "{:,}".format(trip.price_per_seat) }} L.L. per seat</span>
-                        </div>
-                    </div>
-                    <div class="ride-actions">
-                        <a href="{{ url_for('trip_details', trip_id=trip.id) }}" class="btn btn-primary">
-                            <i class="fas fa-eye"></i> View Details
-                        </a>
+                    <div class="route-line"></div>
+                    <div class="location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>{{ trip.to_location }}</span>
                     </div>
                 </div>
-                {% endfor %}
+
+                <div class="ride-details">
+                    <div class="detail-item">
+                        <i class="far fa-calendar"></i>
+                        <span>{{ trip.date }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="far fa-clock"></i>
+                        <span>{{ trip.time }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-chair"></i>
+                        <span>{{ trip.seats }} seats</span>
+                    </div>
+                </div>
+
+                <div class="ride-actions">
+                    <a href="{{ url_for('trip_details', trip_id=trip.id) }}" class="btn btn-primary">
+                        <i class="fas fa-info-circle"></i> View Details
+                    </a>
+                    {% if trip.status == 'upcoming' %}
+                    <form action="{{ url_for('cancel_trip', trip_id=trip.id) }}" method="POST" style="margin: 0;">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
             </div>
-            {% endif %}
+            {% endfor %}
         </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-car"></i>
+            <h3>No Rides Yet</h3>
+            <p>You haven't created any rides yet.</p>
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
@@ -141,227 +78,162 @@
 {% block extra_css %}
 <style>
 .my-rides-page {
+    padding: 2rem;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 24px;
 }
 
 .page-header {
     text-align: center;
-    margin-bottom: 32px;
+    margin-bottom: 2rem;
 }
 
 .page-header h1 {
-    font-size: 2rem;
-    margin-bottom: 8px;
+    font-size: 2.5rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
 }
 
-.subtitle {
-    color: var(--gray);
-}
-
-.rides-tabs {
-    display: flex;
-    gap: 16px;
-    margin-bottom: 24px;
-    border-bottom: 2px solid var(--background-color);
-    padding-bottom: 8px;
-}
-
-.tab-button {
-    background: none;
-    border: none;
-    padding: 8px 16px;
-    font-size: 1rem;
-    color: var(--gray);
-    cursor: pointer;
-    position: relative;
-}
-
-.tab-button.active {
-    color: var(--primary-color);
-    font-weight: 600;
-}
-
-.tab-button.active::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background-color: var(--primary-color);
-}
-
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
-}
-
-.empty-state {
-    text-align: center;
-    padding: 48px;
-    background: var(--white);
-    border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.empty-state i {
-    font-size: 3rem;
-    color: var(--gray);
-    margin-bottom: 16px;
-}
-
-.empty-state h3 {
-    margin-bottom: 8px;
-}
-
-.empty-state p {
-    color: var(--gray);
-    margin-bottom: 24px;
+.page-header p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
 }
 
 .rides-grid {
     display: grid;
-    gap: 16px;
-}
-
-.ride-card {
-    background: var(--white);
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
 }
 
 .ride-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--background-color);
+    margin-bottom: 1.5rem;
 }
 
-.trip-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+.ride-status {
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.9rem;
+    background: rgba(255, 255, 255, 0.1);
 }
 
-.trip-date {
+.ride-status.upcoming {
+    color: #10B981;
+}
+
+.ride-status.completed {
+    color: #6366F1;
+}
+
+.ride-status.cancelled {
+    color: #EF4444;
+}
+
+.ride-price {
+    font-size: 1.25rem;
     font-weight: 600;
+    color: var(--primary-color);
 }
 
-.trip-time {
-    color: var(--gray);
-    font-size: 0.9rem;
+.ride-route {
+    margin-bottom: 1.5rem;
 }
 
-.status-badge {
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 0.9rem;
-    font-weight: 500;
-}
-
-.status-badge.active {
-    background-color: #E8F5E9;
-    color: #2E7D32;
-}
-
-.status-badge.completed {
-    background-color: #E3F2FD;
-    color: #1976D2;
-}
-
-.status-badge.cancelled {
-    background-color: #FFEBEE;
-    color: #D32F2F;
-}
-
-.route-info {
-    margin-bottom: 16px;
-}
-
-.route-point {
+.location {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.location i {
+    color: var(--primary-color);
 }
 
 .route-line {
-    width: 2px;
-    height: 24px;
-    background-color: var(--primary-color);
-    margin-left: 7px;
+    height: 2px;
+    background: var(--primary-color);
+    margin: 0.5rem 0;
 }
 
-.start-point {
-    color: var(--primary-color);
-    font-size: 0.8rem;
-}
-
-.end-point {
-    color: var(--primary-color);
-}
-
-.trip-details {
-    display: flex;
-    gap: 24px;
-    margin-bottom: 16px;
+.ride-details {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .detail-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--gray);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    text-align: center;
+}
+
+.detail-item i {
+    color: var(--primary-color);
+    margin-bottom: 0.25rem;
+}
+
+.detail-item span {
+    display: block;
+    margin-top: 0.25rem;
 }
 
 .ride-actions {
     display: flex;
-    gap: 8px;
+    gap: 1rem;
 }
 
 .ride-actions .btn {
     flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 1rem;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: var(--text-secondary);
 }
 
 @media (max-width: 768px) {
-    .rides-tabs {
-        overflow-x: auto;
-        padding-bottom: 16px;
+    .my-rides-page {
+        padding: 1rem;
     }
-    
+
+    .page-header h1 {
+        font-size: 2rem;
+    }
+
+    .ride-details {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
     .ride-actions {
         flex-direction: column;
     }
 }
 </style>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-function showTab(tabId) {
-    // Hide all tab contents
-    document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.remove('active');
-    });
-    
-    // Remove active class from all tab buttons
-    document.querySelectorAll('.tab-button').forEach(button => {
-        button.classList.remove('active');
-    });
-    
-    // Show selected tab content
-    document.getElementById(tabId).classList.add('active');
-    
-    // Add active class to clicked button
-    event.target.classList.add('active');
-}
-</script>
 {% endblock %} 

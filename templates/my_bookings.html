@@ -2,102 +2,75 @@
 {% block title %}My Bookings - WheelShare{% endblock %}
 
 {% block content %}
-<div class="bookings-page">
-    <div class="page-header">
+<div class="my-bookings-page">
+    <div class="page-header" style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); padding: 2rem; margin-bottom: 2rem; border-radius: 1rem;">
         <h1>My Bookings</h1>
-        <p class="subtitle">Manage your ride bookings</p>
+        <p class="subtitle">Manage your booked rides</p>
     </div>
 
-    <div class="bookings-tabs">
-        <button class="tab-button active" onclick="showTab('upcoming')">Upcoming</button>
-        <button class="tab-button" onclick="showTab('past')">Past</button>
-        <button class="tab-button" onclick="showTab('cancelled')">Cancelled</button>
-    </div>
-
-    <div class="bookings-container">
-        <div id="upcoming" class="tab-content active">
-            {% if not bookings %}
-            <div class="empty-state">
-                <i class="fas fa-calendar"></i>
-                <h3>No Upcoming Bookings</h3>
-                <p>You don't have any upcoming rides booked.</p>
-                <a href="/trips" class="btn btn-primary">Find a Ride</a>
-            </div>
-            {% else %}
-            <div class="bookings-grid">
-                {% for booking in bookings %}
-                <div class="booking-card">
-                    <div class="booking-header">
-                        <div class="driver-info">
-                            <img src="https://picsum.photos/32/32?random={{ booking.id }}" alt="{{ booking.driver_name }}" class="driver-avatar">
-                            <div>
-                                <span class="driver-name">{{ booking.driver_name }}</span>
-                                <span class="booking-date">{{ booking.date }}</span>
-                            </div>
+    <div class="bookings-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+        {% for booking in bookings %}
+        <div class="booking-card" style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); padding: 1.5rem; border-radius: 1rem;">
+            <div class="booking-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <div class="driver-info" style="display: flex; align-items: center; gap: 1rem;">
+                    <img src="https://picsum.photos/50/50?random={{ booking.id }}" alt="{{ booking.driver_name }}" class="driver-avatar" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--primary-color);">
+                    <div>
+                        <h3 style="margin: 0;">{{ booking.driver_name }}</h3>
+                        <div class="rating" style="color: #FFD700; font-size: 0.9rem;">
+                            <i class="fas fa-star"></i> 4.8
                         </div>
-                        <div class="booking-status">
-                            <span class="status-badge confirmed">Confirmed</span>
-                        </div>
-                    </div>
-                    <div class="booking-details">
-                        <div class="route-info">
-                            <div class="route-point">
-                                <i class="fas fa-circle start-point"></i>
-                                <span>{{ booking.from_location }}</span>
-                            </div>
-                            <div class="route-line"></div>
-                            <div class="route-point">
-                                <i class="fas fa-map-marker-alt end-point"></i>
-                                <span>{{ booking.to_location }}</span>
-                            </div>
-                        </div>
-                        <div class="trip-info">
-                            <div class="info-item">
-                                <i class="far fa-clock"></i>
-                                <span>{{ booking.departure_time }}</span>
-                            </div>
-                            <div class="info-item">
-                                <i class="fas fa-money-bill-wave"></i>
-                                <span>{{ "{:,}".format(booking.price) }} L.L.</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="booking-actions">
-                        <button class="btn btn-secondary" onclick="location.href='/chat/{{ booking.id }}'">
-                            <i class="fas fa-comment"></i> Message Driver
-                        </button>
-                        <form action="{{ url_for('cancel_booking', booking_id=booking.id) }}" method="POST" class="booking-actions">
-                            <button type="submit" class="btn btn-danger">
-                                <i class="fas fa-times"></i>
-                                Cancel Booking
-                            </button>
-                            <a href="{{ url_for('my_bookings') }}" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left"></i>
-                                Back
-                            </a>
-                        </form>
                     </div>
                 </div>
-                {% endfor %}
+                <div class="booking-status {{ booking.status }}" style="padding: 0.5rem 1rem; border-radius: 2rem; font-size: 0.9rem;">
+                    {{ booking.status|title }}
+                </div>
             </div>
-            {% endif %}
-        </div>
 
-        <div id="past" class="tab-content">
-            <div class="empty-state">
-                <i class="fas fa-history"></i>
-                <h3>No Past Bookings</h3>
-                <p>You haven't completed any rides yet.</p>
+            <div class="booking-route" style="margin-bottom: 1.5rem;">
+                <div class="location" style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                    <i class="fas fa-map-marker-alt" style="color: var(--primary-color); margin-right: 0.5rem;"></i>
+                    <span>{{ booking.from_location }}</span>
+                </div>
+                <div class="route-line" style="height: 2px; background: var(--primary-color); margin: 0.5rem 0;"></div>
+                <div class="location" style="display: flex; align-items: center;">
+                    <i class="fas fa-map-marker-alt" style="color: var(--primary-color); margin-right: 0.5rem;"></i>
+                    <span>{{ booking.to_location }}</span>
+                </div>
             </div>
-        </div>
 
-        <div id="cancelled" class="tab-content">
-            <div class="empty-state">
-                <i class="fas fa-ban"></i>
-                <h3>No Cancelled Bookings</h3>
-                <p>You don't have any cancelled rides.</p>
+            <div class="booking-details" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+                <div class="detail-item" style="background: rgba(255, 255, 255, 0.05); padding: 0.75rem; border-radius: 0.5rem;">
+                    <i class="far fa-calendar" style="color: var(--primary-color); margin-bottom: 0.25rem;"></i>
+                    <p style="margin: 0;">{{ booking.date }}</p>
+                </div>
+                <div class="detail-item" style="background: rgba(255, 255, 255, 0.05); padding: 0.75rem; border-radius: 0.5rem;">
+                    <i class="far fa-clock" style="color: var(--primary-color); margin-bottom: 0.25rem;"></i>
+                    <p style="margin: 0;">{{ booking.time }}</p>
+                </div>
+                <div class="detail-item" style="background: rgba(255, 255, 255, 0.05); padding: 0.75rem; border-radius: 0.5rem;">
+                    <i class="fas fa-chair" style="color: var(--primary-color); margin-bottom: 0.25rem;"></i>
+                    <p style="margin: 0;">{{ booking.seats }} seats</p>
+                </div>
+                <div class="detail-item" style="background: rgba(255, 255, 255, 0.05); padding: 0.75rem; border-radius: 0.5rem;">
+                    <i class="fas fa-money-bill-wave" style="color: var(--primary-color); margin-bottom: 0.25rem;"></i>
+                    <p style="margin: 0;">{{ booking.price }} LBP</p>
+                </div>
+            </div>
+
+            <div class="booking-actions" style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <a href="{{ url_for('chat', conversation_id=booking.id, user_id=booking.driver_id) }}" class="btn btn-outline" style="padding: 0.5rem 1rem;">
+                    <i class="fas fa-comments"></i> Message
+                </a>
+                {% if booking.status == 'upcoming' %}
+                <form action="{{ url_for('cancel_booking', booking_id=booking.id) }}" method="POST" style="margin: 0;">
+                    <button type="submit" class="btn btn-danger" style="padding: 0.5rem 1rem;">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </form>
+                {% endif %}
             </div>
         </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}

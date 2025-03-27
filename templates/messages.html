@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="messages-page">
-    <div class="messages-sidebar">
+    <div class="messages-sidebar" style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.1);">
         <div class="search-bar">
             <i class="fas fa-search"></i>
             <input type="text" placeholder="Search messages..." class="search-input">
@@ -18,7 +18,7 @@
             </div>
             {% else %}
             {% for conversation in conversations %}
-            <div class="conversation-item {% if conversation.unread %}unread{% endif %} {% if conversation.active %}active{% endif %}" onclick="loadConversation({{ conversation.id }})">
+            <div class="conversation-item {% if conversation.unread %}unread{% endif %} {% if conversation.active %}active{% endif %}" onclick="loadConversation({{ conversation.id }})" style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.1);">
                 <img src="https://picsum.photos/40/40?random={{ conversation.id }}" alt="{{ conversation.name }}" class="user-avatar">
                 <div class="conversation-info">
                     <div class="conversation-header">
@@ -33,7 +33,7 @@
         </div>
     </div>
 
-    <div class="messages-content">
+    <div class="messages-content" style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.1);">
         {% if active_conversation %}
         <div class="chat-header">
             <div class="chat-user">
@@ -59,10 +59,10 @@
         <div class="chat-messages" id="chat-messages">
             {% for message in messages %}
             <div class="message {% if message.sent_by_me %}sent{% else %}received{% endif %}">
-                <div class="message-content">
+                <div class="message-content" style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.1);">
                     {{ message.content }}
-                    <span class="message-time">{{ message.time }}</span>
                 </div>
+                <span class="message-time">{{ message.time }}</span>
             </div>
             {% endfor %}
         </div>

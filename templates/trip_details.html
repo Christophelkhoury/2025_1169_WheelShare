@@ -3,155 +3,68 @@
 
 {% block content %}
 <div class="trip-details-page">
-    <div class="trip-header">
-        <div class="route-info">
-            <div class="route-point">
-                <i class="fas fa-circle start-point"></i>
-                <span>{{ trip.from_location }}</span>
+    <div class="trip-header" style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); padding: 2rem; margin-bottom: 2rem; border-radius: 1rem;">
+        <div class="driver-info">
+            <img src="https://picsum.photos/80/80?random={{ trip.id }}" alt="{{ trip.driver_name }}" class="driver-avatar" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--primary-color);">
+            <div>
+                <h1>{{ trip.driver_name }}</h1>
+                <div class="rating" style="color: #FFD700; margin-top: 0.5rem;">
+                    <i class="fas fa-star"></i> 4.8
+                </div>
             </div>
-            <div class="route-line"></div>
-            <div class="route-point">
-                <i class="fas fa-map-marker-alt end-point"></i>
-                <span>{{ trip.to_location }}</span>
-            </div>
-        </div>
-        <div class="trip-status">
-            <span class="status-badge active">Active</span>
         </div>
     </div>
 
     <div class="trip-content">
-        <div class="trip-main">
-            <div class="trip-section">
-                <h2>Trip Details</h2>
-                <div class="info-grid">
-                    <div class="info-item">
-                        <i class="far fa-clock"></i>
-                        <div class="info-content">
-                            <span class="info-label">Departure Time</span>
-                            <span class="info-value">{{ trip.departure_time }}</span>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-user-friends"></i>
-                        <div class="info-content">
-                            <span class="info-label">Available Seats</span>
-                            <span class="info-value">{{ trip.available_seats }} seats</span>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-money-bill-wave"></i>
-                        <div class="info-content">
-                            <span class="info-label">Price per Seat</span>
-                            <span class="info-value">{{ "{:,}".format(trip.price_per_seat) }} L.L.</span>
-                        </div>
-                    </div>
+        <div class="trip-card" style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); padding: 2rem; margin-bottom: 2rem; border-radius: 1rem;">
+            <div class="trip-route" style="margin-bottom: 2rem;">
+                <div class="location" style="display: flex; align-items: center; margin-bottom: 1rem;">
+                    <i class="fas fa-map-marker-alt" style="color: var(--primary-color); margin-right: 1rem;"></i>
+                    <span style="font-size: 1.2rem;">{{ trip.from_location }}</span>
                 </div>
-                <div class="trip-days">
-                    <span class="days-label">Available Days:</span>
-                    <div class="days-badges">
-                        {% for day in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'] %}
-                        <span class="day-badge {% if day in trip.days %}active{% endif %}">
-                            {{ day }}
-                        </span>
-                        {% endfor %}
-                    </div>
+                <div class="route-line" style="height: 2px; background: var(--primary-color); margin: 1rem 0;"></div>
+                <div class="location" style="display: flex; align-items: center;">
+                    <i class="fas fa-map-marker-alt" style="color: var(--primary-color); margin-right: 1rem;"></i>
+                    <span style="font-size: 1.2rem;">{{ trip.to_location }}</span>
                 </div>
             </div>
 
-            <div class="trip-section">
-                <h2>Driver Information</h2>
-                <div class="driver-info">
-                    <img src="https://picsum.photos/64/64?random={{ trip.id }}" alt="{{ trip.driver_name }}" class="driver-avatar">
-                    <div class="driver-details">
-                        <h3>{{ trip.driver_name }}</h3>
-                        <div class="driver-rating">
-                            <div class="stars">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
-                            </div>
-                            <span>4.5 (32 reviews)</span>
-                        </div>
-                        <button class="btn btn-text" onclick="location.href='/chat/{{ trip.id }}'">
-                            <i class="fas fa-comment"></i> Message Driver
-                        </button>
-                    </div>
+            <div class="trip-info-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                <div class="info-item" style="background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: 0.5rem;">
+                    <i class="far fa-calendar" style="color: var(--primary-color); margin-bottom: 0.5rem;"></i>
+                    <h3>Date</h3>
+                    <p>{{ trip.date }}</p>
+                </div>
+                <div class="info-item" style="background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: 0.5rem;">
+                    <i class="far fa-clock" style="color: var(--primary-color); margin-bottom: 0.5rem;"></i>
+                    <h3>Time</h3>
+                    <p>{{ trip.departure_time }}</p>
+                </div>
+                <div class="info-item" style="background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: 0.5rem;">
+                    <i class="fas fa-chair" style="color: var(--primary-color); margin-bottom: 0.5rem;"></i>
+                    <h3>Available Seats</h3>
+                    <p>{{ trip.available_seats }}</p>
+                </div>
+                <div class="info-item" style="background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: 0.5rem;">
+                    <i class="fas fa-money-bill-wave" style="color: var(--primary-color); margin-bottom: 0.5rem;"></i>
+                    <h3>Price per Seat</h3>
+                    <p>{{ trip.price_per_seat }} LBP</p>
                 </div>
             </div>
 
-            <div class="trip-section">
-                <h2>Vehicle Information</h2>
-                <div class="vehicle-info">
-                    <div class="info-item">
-                        <i class="fas fa-car"></i>
-                        <div class="info-content">
-                            <span class="info-label">Car Model</span>
-                            <span class="info-value">Honda Civic 2020</span>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-palette"></i>
-                        <div class="info-content">
-                            <span class="info-label">Color</span>
-                            <span class="info-value">Silver</span>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-id-card"></i>
-                        <div class="info-content">
-                            <span class="info-label">License Plate</span>
-                            <span class="info-value">ABC 123</span>
-                        </div>
-                    </div>
-                </div>
+            {% if trip.notes %}
+            <div class="trip-notes" style="background: rgba(255, 255, 255, 0.05); padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 2rem;">
+                <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Additional Notes</h3>
+                <p style="line-height: 1.6;">{{ trip.notes }}</p>
             </div>
-        </div>
+            {% endif %}
 
-        <div class="trip-sidebar">
-            <div class="booking-card">
-                <h2>Book This Ride</h2>
-                <div class="price-info">
-                    <span class="price-amount">{{ "{:,}".format(trip.price_per_seat) }} L.L.</span>
-                    <span class="price-per">per seat</span>
-                </div>
-                <form action="{{ url_for('trip_details', trip_id=trip.id) }}" method="POST" class="booking-form">
-                    <div class="form-group">
-                        <label for="seats">Number of Seats</label>
-                        <select name="seats" id="seats" class="form-control" required>
-                            {% for i in range(1, trip.available_seats + 1) %}
-                            <option value="{{ i }}">{{ i }} seat{% if i > 1 %}s{% endif %}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Select Days</label>
-                        <div class="days-grid">
-                            {% for day in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'] %}
-                            <label class="day-checkbox">
-                                <input type="checkbox" name="days" value="{{ day }}" required>
-                                <span class="day-label">{{ day[:3] }}</span>
-                            </label>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <div class="booking-summary">
-                        <div class="summary-item">
-                            <span>Price per seat:</span>
-                            <span>{{ "{:,}".format(trip.price_per_seat) }} L.L.</span>
-                        </div>
-                        <div class="summary-item">
-                            <span>Service fee:</span>
-                            <span>1,000 L.L.</span>
-                        </div>
-                        <div class="summary-item total">
-                            <span>Total:</span>
-                            <span id="totalPrice">{{ "{:,}".format(trip.price_per_seat + 1000) }} L.L.</span>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block">
+            <div class="trip-actions" style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <a href="{{ url_for('chat', conversation_id=trip.id, user_id=trip.driver_id) }}" class="btn btn-outline" style="padding: 0.75rem 1.5rem;">
+                    <i class="fas fa-comments"></i> Message Driver
+                </a>
+                <form action="{{ url_for('trip_details', trip_id=trip.id) }}" method="POST" style="margin: 0;">
+                    <button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">
                         <i class="fas fa-check"></i> Book Now
                     </button>
                 </form>

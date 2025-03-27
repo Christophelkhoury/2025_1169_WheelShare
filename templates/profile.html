@@ -1,111 +1,113 @@
 {% extends "base.html" %}
-{% block title %}My Profile - WheelShare{% endblock %}
+{% block title %}Profile - WheelShare{% endblock %}
 
 {% block content %}
 <div class="profile-page">
-    <div class="profile-header">
-        <div class="profile-cover"></div>
-        <div class="profile-info">
-            <div class="profile-avatar">
-                <img src="https://picsum.photos/128/128" alt="Profile Picture">
-                <button class="edit-avatar">
-                    <i class="fas fa-camera"></i>
-                </button>
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1>My Profile</h1>
+            <p>Manage your account information and preferences</p>
+        </div>
+
+        <div class="profile-content">
+            <div class="profile-section">
+                <h2>Personal Information</h2>
+                <form method="POST" class="profile-form">
+                    <div class="form-group">
+                        <label for="full_name">Full Name</label>
+                        <div class="input-group">
+                            <input type="text" id="full_name" name="full_name" class="form-control" value="{{ user.full_name }}">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <div class="input-group">
+                            <input type="email" id="email" name="email" class="form-control" value="{{ user.email }}">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <div class="input-group">
+                            <input type="tel" id="phone" name="phone" class="form-control" value="{{ user.phone }}">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bio">Bio</label>
+                        <textarea id="bio" name="bio" class="form-control" rows="6" style="min-height: 150px; padding: 1rem; font-size: 1.1rem; line-height: 1.6;">{{ user.bio }}</textarea>
+                    </div>
+
+                    {% if user.role == 'driver' %}
+                    <div class="form-group">
+                        <label for="car_model">Car Model</label>
+                        <div class="input-group">
+                            <input type="text" id="car_model" name="car_model" class="form-control" value="{{ user.car_model }}">
+                            <i class="fas fa-car"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="license_plate">License Plate</label>
+                        <div class="input-group">
+                            <input type="text" id="license_plate" name="license_plate" class="form-control" value="{{ user.license_plate }}">
+                            <i class="fas fa-id-card"></i>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
             </div>
-            <div class="profile-details">
-                <h1>{{ user.name }}</h1>
-                <p class="joined-date">Member since {{ user.joined_date }}</p>
-                <div class="profile-stats">
-                    <div class="stat">
-                        <span class="stat-value">{{ user.trips_completed }}</span>
-                        <span class="stat-label">Trips</span>
+
+            <div class="profile-section">
+                <h2>Change Password</h2>
+                <form method="POST" action="{{ url_for('change_password') }}" class="profile-form">
+                    <div class="form-group">
+                        <label for="current_password">Current Password</label>
+                        <div class="input-group">
+                            <input type="password" id="current_password" name="current_password" class="form-control">
+                            <button type="button" class="btn" onclick="togglePassword('current_password')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="stat">
-                        <span class="stat-value">{{ user.rating }}</span>
-                        <span class="stat-label">Rating</span>
+
+                    <div class="form-group">
+                        <label for="new_password">New Password</label>
+                        <div class="input-group">
+                            <input type="password" id="new_password" name="new_password" class="form-control">
+                            <button type="button" class="btn" onclick="togglePassword('new_password')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="stat">
-                        <span class="stat-value">{{ user.reviews }}</span>
-                        <span class="stat-label">Reviews</span>
+
+                    <div class="form-group">
+                        <label for="confirm_password">Confirm New Password</label>
+                        <div class="input-group">
+                            <input type="password" id="confirm_password" name="confirm_password" class="form-control">
+                            <button type="button" class="btn" onclick="togglePassword('confirm_password')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-key"></i> Update Password
+                        </button>
+                    </div>
+                </form>
             </div>
-        </div>
-    </div>
-
-    <div class="profile-content">
-        <div class="profile-section">
-            <h2>Personal Information</h2>
-            <form class="profile-form">
-                <div class="form-group">
-                    <label for="name">Full Name</label>
-                    <input type="text" id="name" name="name" class="form-input" value="{{ user.name }}">
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" class="form-input" value="{{ user.email }}">
-                </div>
-                <div class="form-group">
-                    <label for="phone">Phone Number</label>
-                    <input type="tel" id="phone" name="phone" class="form-input" value="{{ user.phone }}">
-                </div>
-                <div class="form-group">
-                    <label for="university">University</label>
-                    <select id="university" name="university" class="form-input">
-                        <option value="LAU" {% if user.university == 'LAU' %}selected{% endif %}>Lebanese American University (LAU)</option>
-                        <option value="AUB" {% if user.university == 'AUB' %}selected{% endif %}>American University of Beirut (AUB)</option>
-                        <option value="USJ" {% if user.university == 'USJ' %}selected{% endif %}>Université Saint-Joseph (USJ)</option>
-                        <option value="USEK" {% if user.university == 'USEK' %}selected{% endif %}>Holy Spirit University of Kaslik (USEK)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="bio">Bio</label>
-                    <textarea id="bio" name="bio" class="form-input" rows="4">{{ user.bio }}</textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">Save Changes</button>
-            </form>
-        </div>
-
-        <div class="profile-section">
-            <h2>Vehicle Information</h2>
-            <form class="profile-form">
-                <div class="form-group">
-                    <label for="car_model">Car Model</label>
-                    <input type="text" id="car_model" name="car_model" class="form-input" value="{{ user.car_model }}">
-                </div>
-                <div class="form-group">
-                    <label for="car_year">Year</label>
-                    <input type="number" id="car_year" name="car_year" class="form-input" value="{{ user.car_year }}">
-                </div>
-                <div class="form-group">
-                    <label for="car_color">Color</label>
-                    <input type="text" id="car_color" name="car_color" class="form-input" value="{{ user.car_color }}">
-                </div>
-                <div class="form-group">
-                    <label for="license_plate">License Plate</label>
-                    <input type="text" id="license_plate" name="license_plate" class="form-input" value="{{ user.license_plate }}">
-                </div>
-                <button type="submit" class="btn btn-primary">Save Changes</button>
-            </form>
-        </div>
-
-        <div class="profile-section">
-            <h2>Account Settings</h2>
-            <form class="profile-form">
-                <div class="form-group">
-                    <label for="current_password">Current Password</label>
-                    <input type="password" id="current_password" name="current_password" class="form-input">
-                </div>
-                <div class="form-group">
-                    <label for="new_password">New Password</label>
-                    <input type="password" id="new_password" name="new_password" class="form-input">
-                </div>
-                <div class="form-group">
-                    <label for="confirm_password">Confirm New Password</label>
-                    <input type="password" id="confirm_password" name="confirm_password" class="form-input">
-                </div>
-                <button type="submit" class="btn btn-primary">Change Password</button>
-            </form>
         </div>
     </div>
 </div>
@@ -114,140 +116,100 @@
 {% block extra_css %}
 <style>
 .profile-page {
-    max-width: 1200px;
+    padding: 2rem;
+    max-width: 800px;
     margin: 0 auto;
-    padding: 24px;
+}
+
+.profile-container {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    padding: 2.5rem;
 }
 
 .profile-header {
-    background: var(--white);
-    border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 24px;
-    overflow: hidden;
-}
-
-.profile-cover {
-    height: 200px;
-    background: linear-gradient(135deg, var(--primary-color), #4A90E2);
-}
-
-.profile-info {
-    padding: 24px;
-    position: relative;
-    margin-top: -64px;
-}
-
-.profile-avatar {
-    position: relative;
-    width: 128px;
-    height: 128px;
-    margin-bottom: 16px;
-}
-
-.profile-avatar img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    border: 4px solid var(--white);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    object-fit: cover;
-}
-
-.edit-avatar {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: var(--primary-color);
-    color: var(--white);
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.profile-details h1 {
-    font-size: 1.5rem;
-    margin-bottom: 4px;
-}
-
-.joined-date {
-    color: var(--gray);
-    margin-bottom: 16px;
-}
-
-.profile-stats {
-    display: flex;
-    gap: 32px;
-}
-
-.stat {
     text-align: center;
+    margin-bottom: 2.5rem;
 }
 
-.stat-value {
-    display: block;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--primary-color);
+.profile-header h1 {
+    font-size: 2.5rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
 }
 
-.stat-label {
-    font-size: 0.9rem;
-    color: var(--gray);
+.profile-header p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
 }
 
 .profile-content {
-    display: grid;
-    gap: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
 }
 
 .profile-section {
-    background: var(--white);
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 1rem;
+    padding: 2rem;
 }
 
 .profile-section h2 {
-    font-size: 1.25rem;
-    margin-bottom: 24px;
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
 }
 
 .profile-form {
-    display: grid;
-    gap: 16px;
-    max-width: 600px;
-}
-
-.form-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 1.5rem;
 }
 
-.form-group label {
-    font-weight: 600;
-    color: var(--text-color);
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
+.form-actions .btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
 }
 
 @media (max-width: 768px) {
-    .profile-stats {
-        gap: 16px;
+    .profile-page {
+        padding: 1rem;
     }
-    
-    .profile-info {
-        text-align: center;
+
+    .profile-container {
+        padding: 1.5rem;
     }
-    
-    .profile-avatar {
-        margin: -64px auto 16px;
+
+    .profile-header h1 {
+        font-size: 2rem;
     }
 }
 </style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function togglePassword(inputId) {
+    const input = document.getElementById(inputId);
+    const icon = input.nextElementSibling.querySelector('i');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+</script>
 {% endblock %} 
