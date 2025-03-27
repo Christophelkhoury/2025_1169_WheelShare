@@ -109,21 +109,6 @@
     </div>
 </section>
 
-{% if not session.get('user_id') %}
-<section class="cta-section">
-    <div class="container">
-        <div class="cta-content">
-            <h2>Ready to Start Your Journey?</h2>
-            <p>Join WheelShare today and experience hassle-free university commuting.</p>
-            <a href="{{ url_for('choose_role') }}" class="btn btn-primary btn-lg">
-                <i class="fas fa-user-plus"></i>
-                <span>Create Account</span>
-            </a>
-        </div>
-    </div>
-</section>
-{% endif %}
-
 <style>
 .home-container {
     min-height: calc(100vh - 4rem);
@@ -248,33 +233,30 @@
 
 .feature-card {
     background: var(--surface-light);
-    border-radius: 1.5rem;
-    padding: var(--space-8);
+    padding: var(--space-6);
+    border-radius: 1rem;
     text-align: center;
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(10px);
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: transform 0.3s;
 }
 
 .feature-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .feature-icon {
-    width: 4rem;
-    height: 4rem;
-    background: var(--gradient-primary);
-    border-radius: 1rem;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto var(--space-4);
+    background: var(--primary);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto var(--space-4);
 }
 
 .feature-icon i {
     font-size: 1.5rem;
-    color: var(--text-primary);
+    color: white;
 }
 
 .feature-card h3 {
@@ -290,44 +272,41 @@
 
 .routes-section {
     padding: var(--space-16) 0;
-    background: var(--surface);
+    background: var(--surface-light);
 }
 
 .routes-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: var(--space-8);
 }
 
 .route-card {
-    background: var(--surface-light);
-    border-radius: 1.5rem;
-    padding: var(--space-8);
+    background: var(--surface);
+    padding: var(--space-6);
+    border-radius: 1rem;
     text-align: center;
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(10px);
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: transform 0.3s;
 }
 
 .route-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .route-icon {
-    width: 4rem;
-    height: 4rem;
-    background: var(--gradient-primary);
-    border-radius: 1rem;
+    width: 48px;
+    height: 48px;
+    margin: 0 auto var(--space-4);
+    background: var(--primary);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto var(--space-4);
 }
 
 .route-icon i {
-    font-size: 1.5rem;
-    color: var(--text-primary);
+    font-size: 1.25rem;
+    color: white;
 }
 
 .route-card h3 {
@@ -341,44 +320,17 @@
     line-height: 1.6;
 }
 
-.cta-section {
-    padding: var(--space-16) 0;
-    background: var(--gradient-primary);
-    color: var(--text-primary);
-    text-align: center;
-}
-
-.cta-content {
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.cta-content h2 {
-    font-size: 2.5rem;
-    margin-bottom: var(--space-4);
-}
-
-.cta-content p {
-    font-size: 1.125rem;
-    margin-bottom: var(--space-8);
-    opacity: 0.9;
-}
-
 @media (max-width: 768px) {
-    .content-wrapper {
-        margin: var(--space-4);
-        padding: var(--space-6);
-    }
-    
     .main-title {
         font-size: 3rem;
     }
-    
+
     .subtitle {
         font-size: 1.125rem;
     }
-    
-    .quick-actions {
+
+    .features-grid,
+    .routes-grid {
         grid-template-columns: 1fr;
     }
 }
