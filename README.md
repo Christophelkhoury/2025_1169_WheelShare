@@ -101,7 +101,7 @@ Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
 
 ## 👥 Auteurs
 
-- Christophe Lkhoury - Développeur Principal
+- Christophe EL Khoury - Développeur Principal
 
 ## 🙏 Remerciements
 
