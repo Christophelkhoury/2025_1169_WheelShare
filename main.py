@@ -8,6 +8,8 @@ import sys
 load_dotenv()
 
 app = Flask(__name__)
+app.secret_key = 'your-secret-key-here'
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 # Sample data for demonstration
 SAMPLE_TRIPS = [
